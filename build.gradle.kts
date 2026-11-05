@@ -26,8 +26,6 @@ subprojects {
         maven("https://maven.pvphub.me/#/tofaa/io/github/tofaa2/")
         maven("https://repo.opencollab.dev/main/")
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-        maven("https://repo.oraxen.com/releases")
-        maven("https://repo.oraxen.com/snapshots")
         maven("https://maven.pvphub.me/tofaa")
         maven("https://jitpack.io")
         maven("https://repo.alessiodp.com/snapshots/")

@@ -1,81 +1,81 @@
-<div align="center">
+# kokonut_nametag
 
-# UnlimitedNameTags
+에고버스에서 플레이어 머리 위에 닉네임과 칭호를 표시하는 플러그인입니다.
 
-Custom stacked nametags for Paper servers: text, item, and block display rows with placeholders, animations, visibility rules, and a developer API.
+UnlimitedNameTags를 기반으로 수정했습니다. 원본 라이선스와 저작권 고지는 `LICENSE`에 보존합니다.
 
-[![GitHub Release](https://img.shields.io/github/release/alexdev03/unlimitednametags.svg)](https://github.com/alexdev03/UnlimitedNameTags/releases)
-[![CodeFactor](https://www.codefactor.io/repository/github/alexdev03/unlimitednametags/badge)](https://www.codefactor.io/repository/github/alexdev03/unlimitednametags)
-[![BuiltByBit](https://img.shields.io/badge/BuiltByBit-resource-lightblue?style=for-the-badge)](https://builtbybit.com/resources/unlimitednametags.46172/)
-[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/W4Fu8fqCKs)
+## 실행 환경
 
-<img alt="UnlimitedNameTags in action" src="https://i.imgur.com/w7zlGaO.gif" width="640">
+- 현재 빌드는 Java 25와 Paper 26.3 API를 대상으로 합니다. 서버에서도 Java 25 이상이 필요합니다.
+- Paper 또는 호환 서버와 PacketEvents가 필요합니다. Folia용 스케줄러도 포함합니다.
+- Nexo 연동으로 모자 높이에 맞춰 이름표 위치를 조정합니다.
+- PlaceholderAPI, MiniPlaceholders 등은 해당 기능을 사용할 때 설치합니다.
 
-</div>
+## 설치
 
-## Requirements
+1. `target/kokonut_nametag.jar`와 PacketEvents를 서버의 `plugins` 폴더에 넣습니다.
+2. 서버를 재시작합니다.
+3. `plugins/kokonut_nametag/settings.yml`에서 문구와 동작을 설정합니다.
+4. `/네임태그 리로드`로 설정을 적용합니다.
 
-- Paper 1.21.4+ or a compatible Paper fork such as Purpur or Folia.
-- PacketEvents installed on the server.
-- Spigot and other non-Paper servers are not supported.
+기존 버전에서 이전한다면 서버를 종료하고 `plugins/UnlimitedNameTags` 폴더를 백업한 뒤 `plugins/kokonut_nametag`로 변경하세요. 기존 JAR는 제거해 중복 로드를 방지하세요. 최초 실행 시 라이브러리 다운로드를 위한 네트워크 연결이 필요합니다.
 
-## Features
+## 명령어
 
-- Multiple stacked `displayGroups` per player.
-- TEXT rows with structured lines and optional per-line `when` conditions.
-- ITEM and BLOCK rows with configurable material, scale, offset, billboard, glow, and animations.
-- PlaceholderAPI, MiniPlaceholders, vanish integrations, Geyser support notes, and hook support for common cosmetic plugins.
-- Config migration through `configVersion` and `SettingsYamlMigrator`.
+기본 명령어는 `/네임태그`, 별칭은 `/코코넛이름표`입니다. 대괄호는 입력할 값을 뜻하며 실제 입력에는 포함하지 않습니다.
 
-## Install
+| 명령어 | 설명 |
+| --- | --- |
+| `/네임태그` | 도움말 |
+| `/네임태그 리로드` | 설정 다시 불러오기 |
+| `/네임태그 진단` | 이름표 상태 진단 |
+| `/네임태그 디버그 [활성 또는 비활성]` | 디버그 로그 설정, 값 생략 시 전환 |
+| `/네임태그 숨기기 [플레이어]` | 대상 이름표 숨기기 |
+| `/네임태그 보이기 [플레이어]` | 대상 이름표 표시 |
+| `/네임태그 갱신 [플레이어]` | 대상 이름표 갱신 |
+| `/네임태그 회전방식 [종류]` | 중앙·수평·수직·고정 중 선택 |
+| `/네임태그 문자형식 [형식]` | 미니메시지·레거시·통합 중 선택 |
+| `/네임태그 다른이름표숨기기` | 자신에게 다른 이름표 숨기기 |
+| `/네임태그 다른이름표보기` | 자신에게 다른 이름표 표시 |
+| `/네임태그 설정` | 개인별 표시 설정 도움말 |
+| `/네임태그 발광` | 발광 설정 도움말 |
 
-1. Put PacketEvents and `UnlimitedNametags.jar` in `plugins/`.
-2. Restart the server.
-3. Edit `plugins/UnlimitedNameTags/settings.yml`.
+개인 설정 예:
 
-## Build
-
-```bash
-./gradlew :paper:shadowJar
+```text
+/네임태그 설정 조회
+/네임태그 설정 다른이름표보기 활성
+/네임태그 설정 내이름표보기 비활성
+/네임태그 설정 내이름표공개 활성
 ```
 
-On Windows:
+마지막에 플레이어 이름을 붙이면 권한이 있는 사용자가 대상의 설정을 변경할 수 있습니다.
 
-```bat
-gradlew.bat :paper:shadowJar
+발광 하위 명령어는 `고정`, `애니메이션`, `배속`, `무지개`, `그라데이션`, `초기화`, `조회`입니다. 발광은 아이템·블록 그룹에 적용됩니다. 예: `/네임태그 발광 고정 Player 0 #FFAA00`. 그라데이션 간격은 색상 뒤에 `간격 10`처럼 입력합니다. 상세 문법은 `/네임태그 발광`에서 확인하세요.
+
+## 권한과 호환성
+
+기존 권한 설정을 유지하도록 `unt.*` 권한 노드를 사용합니다. 관리 명령어는 기본적으로 운영자에게 허용됩니다.
+
+- 관리: `unt.reload`, `unt.debug`, `unt.hide`, `unt.show`, `unt.refresh`, `unt.billboard`, `unt.formatter`, `unt.glow`
+- 개인 설정: `unt.preferences`
+- 타인 설정: `unt.preferences.others`, `unt.glow.others`
+- 다른 이름표 표시 전환: `unt.hideOtherNametags`, `unt.showOtherNametags`
+
+설정 키와 `%unt_...%` 플레이스홀더, 내부 Java 패키지 및 API 모듈 이름은 기존 형식을 유지합니다. 외부 플러그인이 이름으로 조회하거나 의존성을 선언한다면 `kokonut_nametag`로 수정해야 합니다.
+
+## 기능과 경량화
+
+여러 줄 텍스트, 조건부 표시, 아이템·블록 표시, 애니메이션, 발광, 벽 뒤 가시성, 개인별 표시 설정과 개발자 API를 제공합니다.
+
+Nexo 연동을 유지하고 Oraxen 연동과 전용 저장소를 제거했습니다. 미사용 Kotlin 플러그인·의존성 선언을 정리하고 매 틱 색상 단계 갱신 작업을 하나로 통합했습니다. 실제 성능 차이는 서버에서 별도로 측정해야 합니다.
+
+## 빌드
+
+Gradle 실행용 JDK 21과 컴파일용 JDK 25를 준비합니다. Java toolchain 설정은 25입니다.
+
+```powershell
+.\gradlew.bat :common:test :paper:test :paper:shadowJar
 ```
 
-The server jar is written to `target/UnlimitedNametags.jar`.
-
-## API
-
-Use the artifact that matches the API surface you need:
-
-```kotlin
-dependencies {
-    compileOnly("io.github.alexdev03:unlimitednametags-api-paper:2.0.0")
-    // compileOnly("io.github.alexdev03:unlimitednametags-api:2.0.0")
-}
-```
-
-- `api-paper`: Paper/Bukkit types, `UNTPaperAPI`, `Player` overloads, `Formatter`.
-- `api`: UUID and Adventure-only interfaces.
-- `common`: shared config and value types used by the API.
-
-Publishing notes are in [MAVEN_CENTRAL_PUBLISHING.md](MAVEN_CENTRAL_PUBLISHING.md). Breaking changes are tracked in [CHANGELOG.md](CHANGELOG.md).
-
-## Minimal Config Example
-
-```yaml
-displayGroups:
-  - lines:
-      - text: "%luckperms_prefix%%player_name%"
-      - text: "&a%player_ping%ms"
-        when: "%player_ping% < 70"
-    scale: 1.0
-    yOffset: 1.0
-```
-
-## Support
-
-Use [Discord](https://discord.gg/W4Fu8fqCKs) for questions and support.
+결과 파일: `target/kokonut_nametag.jar`

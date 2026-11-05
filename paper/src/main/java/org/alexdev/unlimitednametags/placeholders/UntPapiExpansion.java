@@ -23,7 +23,7 @@ public class UntPapiExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor() {
-        return "AlexDev";
+        return "pingpong";
     }
 
     @Override

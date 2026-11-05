@@ -40,7 +40,7 @@ public class Advanced {
         @Comment("Higher value = checked before lower priority rules.")
         private int priority;
 
-        @Comment("Vertical offset (same unit as Nexo/Oraxen hat hooks). Must be > 0.")
+        @Comment("Vertical offset (same unit as Nexo hat hooks). Must be > 0.")
         private double height;
 
         @Comment("Bukkit material name, e.g. LEATHER_HELMET. Omit to ignore material.")

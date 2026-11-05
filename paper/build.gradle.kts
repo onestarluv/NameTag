@@ -3,7 +3,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     id("com.gradleup.shadow") version "9.4.2"
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "2.4.0-RC2"
     id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
@@ -22,20 +21,16 @@ dependencies {
     compileOnly(libs.miniplaceholdersApi)
     compileOnly(libs.floodgateApi)
     compileOnly(libs.geyserApi)
-    compileOnly(libs.commonsLang)
     compileOnly(libs.configlib)
-    compileOnly(libs.configlibPaper)
     compileOnly(libs.entityLib) {
         exclude(group = "com.github.retrooper", module = "packetevents-spigot")
         exclude(group = "com.github.retrooper", module = "packetevents-api")
     }
     compileOnly(libs.packeteventsSpigot)
     compileOnly(libs.viaVersionApi)
-    compileOnly(libs.bstatsBukkit)
     compileOnly(libs.expiringMap)
     compileOnly(libs.commonsJexl3)
     compileOnly(libs.nexo)
-    compileOnly(libs.oraxen)
     compileOnly(libs.itemsAdder)
     compileOnly(libs.creative.rp)
     compileOnly(libs.creative.serializer)
@@ -66,7 +61,6 @@ tasks.withType<Test>().configureEach {
 
 tasks.named<ShadowJar>("shadowJar") {
     val relocation = "org.alexdev.unlimitednametags.libraries."
-    relocate("net.byteflux.libby", relocation + "libby.bukkit")
     relocate("org.jetbrains", relocation + "jetbrains")
     relocate("org.intellij", relocation + "intellij")
     relocate("de.themoep", relocation + "themoep")
@@ -113,10 +107,6 @@ tasks.named<ShadowJar>("shadowJar") {
     minimize()
 }
 
-kotlin {
-    jvmToolchain(25)
-}
-
 tasks.named<Delete>("clean").configure {
     delete(tasks.named<ShadowJar>("shadowJar").get().archiveFile)
 }
@@ -149,8 +139,7 @@ tasks {
         }
     }
     runPaper.folia.registerTask {
-        minecraftVersion("26.2")
-        serverJar(rootProject.file("tmp-folia/Folia/folia-server/build/libs/folia-paperclip-26.2.local-SNAPSHOT.jar"))
+        minecraftVersion("26.3")
 
 //        downloadPlugins {
 //            github("Anon8281", "PlaceholderAPI", "2.11.7", "PlaceholderAPI-2.11.7-DEV-Folia.jar")

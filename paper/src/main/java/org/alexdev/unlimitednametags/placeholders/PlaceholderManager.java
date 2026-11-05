@@ -142,14 +142,10 @@ public class PlaceholderManager {
             if (index == 0) {
                 index = maxIndex;
             }
-        }, 0, 1);
-        plugin.getTaskScheduler().runTaskTimerAsynchronously(() -> {
             mmIndex -= 1;
             if (mmIndex == 1) {
                 mmIndex = maxMIndex;
             }
-        }, 0, 1);
-        plugin.getTaskScheduler().runTaskTimerAsynchronously(() -> {
             miniGradientIndexBD = miniGradientIndexBD.add(stepBD);
             if (miniGradientIndexBD.compareTo(one) > 0) {
                 miniGradientIndexBD = minusOne;

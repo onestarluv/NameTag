@@ -227,13 +227,6 @@ public final class UnlimitedNameTags extends JavaPlugin implements UnlimitedName
             hooks.put(NexoHook.class, hook);
         }
 
-        if (Bukkit.getPluginManager().isPluginEnabled("Oraxen")) {
-            getLogger().info("Oraxen found, hooking into it");
-            final OraxenHook hook = new OraxenHook(this);
-            hatHooks.add(hook);
-            hooks.put(OraxenHook.class, hook);
-        }
-
         if (Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")) {
             getLogger().info("ItemsAdder found, hooking into it");
             final ItemsAdderHook hook = new ItemsAdderHook(this);

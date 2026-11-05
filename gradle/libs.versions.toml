@@ -1,5 +1,5 @@
 [versions]
-paperApiVersion = "26.2.build.+"
+paperApiVersion = "26.3.build.+"
 adventureApiVersion = "4.16.0"
 typeWriterVersion = "0.9.0"
 lombokVersion = "1.18.46"
@@ -7,18 +7,15 @@ placeholderapiVersion = "2.11.6"
 miniplaceholdersApiVersion = "3.0.1"
 floodgateApiVersion = "2.2.3-SNAPSHOT"
 geyserApiVersion = "2.4.2-SNAPSHOT"
-commonsLangVersion = "3.14.0"
 configlibVersion = "4.6.1"
 entityLibVersion = "3.3.3-SNAPSHOT"
 packeteventsSpigotVersion = "2.10.0-SNAPSHOT"
 universalSchedulerVersion = "0.1.6"
 viaVersionApiVersion = "5.0.1"
 libbyBukkitVersion = "2.0.0-SNAPSHOT"
-bstatsBukkitVersion = "3.0.2"
 expiringMapVersion = "0.5.11"
 commonsJexl3Version = "3.4.0"
 nexoVersion = "1.2.0"
-oraxenVersion = "1.195.0"
 itemsAdderVersion = "3.6.1"
 gsonVersion = "2.11.0"
 creative-rp = "1.7.3"
@@ -38,20 +35,16 @@ placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholder
 miniplaceholdersApi = { module = "io.github.miniplaceholders:miniplaceholders-api", version.ref = "miniplaceholdersApiVersion" }
 floodgateApi = { module = "org.geysermc.floodgate:api", version.ref = "floodgateApiVersion" }
 geyserApi = { module = "org.geysermc.geyser:api", version.ref = "geyserApiVersion" }
-commonsLang = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLangVersion" }
 configlib = { module = "de.exlll:configlib-yaml", version.ref = "configlibVersion" }
-configlibPaper = { module = "de.exlll:configlib-paper", version.ref = "configlibVersion" }
 entityLib = { module = "io.github.tofaa2:spigot", version.ref = "entityLibVersion" }
 packeteventsSpigot = { module = "com.github.retrooper:packetevents-spigot", version.ref = "packeteventsSpigotVersion" }
 universalScheduler = { module = "com.github.Anon8281:UniversalScheduler", version.ref = "universalSchedulerVersion" }
 viaVersionApi = { module = "com.viaversion:viaversion-api", version.ref = "viaVersionApiVersion" }
 libbyBukkit = { module = "com.alessiodp.libby:libby-bukkit", version.ref = "libbyBukkitVersion" }
-bstatsBukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstatsBukkitVersion" }
 expiringMap = { module = "net.jodah:expiringmap", version.ref = "expiringMapVersion" }
 snakeyamlEngine = { module = "org.snakeyaml:snakeyaml-engine", version.ref = "snakeyamlEngineVersion" }
 commonsJexl3 = { module = "org.apache.commons:commons-jexl3", version.ref = "commonsJexl3Version" }
 nexo = { module = "com.nexomc:nexo", version.ref = "nexoVersion" }
-oraxen = { module = "io.th0rgal:oraxen", version.ref = "oraxenVersion" }
 itemsAdder = { module = "com.github.LoneDev6:API-ItemsAdder", version.ref = "itemsAdderVersion" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gsonVersion" }
 creative-rp = { module = "team.unnamed:creative-api", version.ref = "creative-rp" }

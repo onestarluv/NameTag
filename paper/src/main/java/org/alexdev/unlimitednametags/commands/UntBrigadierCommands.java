@@ -27,12 +27,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Paper lifecycle-registered Brigadier command tree for {@code /unt}.
+ * Paper lifecycle-registered Brigadier command tree for {@code /네임태그}.
  */
 @SuppressWarnings("UnstableApiUsage")
 public final class UntBrigadierCommands {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
+    private static String state(boolean enabled) {
+        return enabled ? "활성" : "비활성";
+    }
 
     private UntBrigadierCommands() {
     }
@@ -44,7 +48,7 @@ public final class UntBrigadierCommands {
         }
 
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-            final LiteralCommandNode<CommandSourceStack> root = Commands.literal("unt")
+            final LiteralCommandNode<CommandSourceStack> root = Commands.literal("네임태그")
                     .executes(ctx -> {
                         sendHelp(plugin, ctx.getSource().getSender());
                         return Command.SINGLE_SUCCESS;
@@ -63,26 +67,26 @@ public final class UntBrigadierCommands {
                     .then(literalGlow(plugin))
                     .build();
 
-            event.registrar().register(root, "UnlimitedNametags commands", List.of("unlimitednametags"));
+            event.registrar().register(root, "플레이어 머리 위 이름표 관리", List.of("코코넛이름표"));
         });
     }
 
     private static void sendHelp(@NotNull UnlimitedNameTags plugin, @NotNull CommandSender sender) {
         final String v = plugin.getPluginMeta().getVersion();
-        msg(plugin, sender, "<green>UnlimitedNameTags v<version></green>", Placeholder.unparsed("version", v));
-        msg(plugin, sender, "<green>/unt reload</green> <gray>- Reloads the plugin");
-        msg(plugin, sender, "<green>/unt debug</green> <gray>- Debugs the plugin");
-        msg(plugin, sender, "<green>/unt hide</green> <gray>- Hides the nametag (target player)</gray>");
-        msg(plugin, sender, "<green>/unt show</green> <gray>- Shows the nametag (target player)</gray>");
-        msg(plugin, sender, "<green>/unt refresh</green> <gray>- Re-applies nametag for everyone (target player)</gray>");
-        msg(plugin, sender, "<green>/unt debugger</green> <gray>- Toggle nametag debug logging</gray>");
-        msg(plugin, sender, "<green>/unt debugger</green> <gray><true|false></gray> <gray>- Set nametag debug logging</gray>");
-        msg(plugin, sender, "<green>/unt billboard</green> <gray><type></gray> <gray>- Set default billboard</gray>");
-        msg(plugin, sender, "<green>/unt formatter</green> <gray><name></gray> <gray>- Set default text formatter</gray>");
-        msg(plugin, sender, "<green>/unt hideOtherNametags</green> <gray>- Hide other players' nametags</gray>");
-        msg(plugin, sender, "<green>/unt showOtherNametags</green> <gray>- Show other players' nametags</gray>");
-        msg(plugin, sender, "<green>/unt preferences …</green> <gray>- Per-player nametag visibility (see /unt preferences)");
-        msg(plugin, sender, "<green>/unt glow …</green> <gray>- Per-player glow overrides (see /unt glow)");
+        msg(plugin, sender, "<green>kokonut_nametag v<version></green>", Placeholder.unparsed("version", v));
+        msg(plugin, sender, "<green>/네임태그 리로드</green> <gray>- 설정을 다시 불러옵니다");
+        msg(plugin, sender, "<green>/네임태그 진단</green> <gray>- 플러그인 상태를 진단합니다");
+        msg(plugin, sender, "<green>/네임태그 숨기기</green> <gray>- 대상 플레이어의 이름표를 숨깁니다</gray>");
+        msg(plugin, sender, "<green>/네임태그 보이기</green> <gray>- 대상 플레이어의 이름표를 표시합니다</gray>");
+        msg(plugin, sender, "<green>/네임태그 갱신</green> <gray>- 대상 플레이어의 이름표를 갱신합니다</gray>");
+        msg(plugin, sender, "<green>/네임태그 디버그</green> <gray>- 디버그 로그를 전환합니다</gray>");
+        msg(plugin, sender, "<green>/네임태그 디버그</green> <gray>[활성|비활성]</gray> <gray>- 디버그 로그를 설정합니다</gray>");
+        msg(plugin, sender, "<green>/네임태그 회전방식</green> <gray>[종류]</gray> <gray>- 기본 회전 방식을 설정합니다</gray>");
+        msg(plugin, sender, "<green>/네임태그 문자형식</green> <gray>[형식]</gray> <gray>- 기본 문자 형식을 설정합니다</gray>");
+        msg(plugin, sender, "<green>/네임태그 다른이름표숨기기</green> <gray>- 다른 플레이어의 이름표를 숨깁니다</gray>");
+        msg(plugin, sender, "<green>/네임태그 다른이름표보기</green> <gray>- 다른 플레이어의 이름표를 표시합니다</gray>");
+        msg(plugin, sender, "<green>/네임태그 설정</green> <gray>- 개인별 이름표 표시를 설정합니다");
+        msg(plugin, sender, "<green>/네임태그 발광</green> <gray>- 개인별 발광 효과를 설정합니다");
     }
 
     private static void sendPreferenceLines(@NotNull UnlimitedNameTags plugin, @NotNull CommandSender to,
@@ -92,12 +96,12 @@ public final class UntBrigadierCommands {
         final boolean showOwnSelf = nm.isShowingOwnNametagToSelf(subject);
         final boolean showOwnToOthers = nm.isShowingOwnNametagToOthers(subject);
         msg(plugin, to, headerMiniMessage, Placeholder.unparsed("name", subject.getName()));
-        msg(plugin, to, "  <yellow>seeothers</yellow><gray>:</gray> <white><v></white>",
-                Placeholder.unparsed("v", String.valueOf(seeOthers)));
-        msg(plugin, to, "  <yellow>showown</yellow><gray>:</gray> <white><v></white>",
-                Placeholder.unparsed("v", String.valueOf(showOwnSelf)));
-        msg(plugin, to, "  <yellow>showothers</yellow><gray>:</gray> <white><v></white>",
-                Placeholder.unparsed("v", String.valueOf(showOwnToOthers)));
+        msg(plugin, to, "  <yellow>다른이름표보기</yellow><gray>:</gray> <white><v></white>",
+                Placeholder.unparsed("v", state(seeOthers)));
+        msg(plugin, to, "  <yellow>내이름표보기</yellow><gray>:</gray> <white><v></white>",
+                Placeholder.unparsed("v", state(showOwnSelf)));
+        msg(plugin, to, "  <yellow>내이름표공개</yellow><gray>:</gray> <white><v></white>",
+                Placeholder.unparsed("v", state(showOwnToOthers)));
     }
 
     private static void msg(@NotNull UnlimitedNameTags plugin, @NotNull CommandSender sender,
@@ -110,20 +114,20 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalReload(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("reload")
+        return Commands.literal("리로드")
                 .requires(stack -> stack.getSender().hasPermission("unt.reload"))
                 .executes(ctx -> {
                     plugin.getConfigManager().reload();
                     plugin.getNametagManager().reload();
                     plugin.getPlaceholderManager().reload();
-                    msg(plugin, ctx.getSource().getSender(), "<green>UnlimitedNameTags has been reloaded!</green>");
+                    msg(plugin, ctx.getSource().getSender(), "<green>kokonut_nametag 설정을 다시 불러왔습니다!</green>");
                     return Command.SINGLE_SUCCESS;
                 });
     }
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalDebug(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("debug")
+        return Commands.literal("진단")
                 .requires(stack -> stack.getSender().hasPermission("unt.debug"))
                 .executes(ctx -> {
                     plugin.getNametagManager().debug(ctx.getSource().getSender());
@@ -133,32 +137,32 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalDebugger(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("debugger")
+        return Commands.literal("디버그")
                 .requires(stack -> stack.getSender().hasPermission("unt.debug"))
                 .executes(ctx -> {
                     final boolean debug = !plugin.getNametagManager().isDebug();
                     plugin.getNametagManager().setDebug(debug);
                     msg(plugin, ctx.getSource().getSender(),
-                            "<green>UnlimitedNameTags debug mode set to <yellow><state></yellow></green>",
-                            Placeholder.unparsed("state", String.valueOf(debug)));
+                            "<green>디버그 모드: <yellow><state></yellow></green>",
+                            Placeholder.unparsed("state", state(debug)));
                     return Command.SINGLE_SUCCESS;
                 })
-                .then(Commands.argument("enabled", BoolArgumentType.bool())
+                .then(Commands.argument("enabled", KoreanCommandArguments.toggle())
                         .executes(ctx -> {
                             final boolean debug = BoolArgumentType.getBool(ctx, "enabled");
                             plugin.getNametagManager().setDebug(debug);
                             msg(plugin, ctx.getSource().getSender(),
-                                    "<green>UnlimitedNameTags debug mode set to <yellow><state></yellow></green>",
-                                    Placeholder.unparsed("state", String.valueOf(debug)));
+                                    "<green>디버그 모드: <yellow><state></yellow></green>",
+                                    Placeholder.unparsed("state", state(debug)));
                             return Command.SINGLE_SUCCESS;
                         }));
     }
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalHide(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("hide")
+        return Commands.literal("숨기기")
                 .requires(stack -> stack.getSender().hasPermission("unt.hide"))
-                .then(Commands.argument("target", StringArgumentType.word())
+                .then(Commands.argument("target", KoreanCommandArguments.word())
                         .suggests((ctx, builder) -> {
                             Bukkit.getOnlinePlayers().forEach(p -> builder.suggest(p.getName()));
                             return builder.buildFuture();
@@ -166,7 +170,7 @@ public final class UntBrigadierCommands {
                         .executes(ctx -> {
                             final Player target = Bukkit.getPlayerExact(StringArgumentType.getString(ctx, "target"));
                             if (target == null) {
-                                msg(plugin, ctx.getSource().getSender(), "<red>Player not found or not online.</red>");
+                                msg(plugin, ctx.getSource().getSender(), "<red>접속 중인 플레이어를 찾을 수 없습니다.</red>");
                                 return 0;
                             }
                             plugin.getNametagManager().removeAllViewers(target);
@@ -176,9 +180,9 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalShow(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("show")
+        return Commands.literal("보이기")
                 .requires(stack -> stack.getSender().hasPermission("unt.show"))
-                .then(Commands.argument("target", StringArgumentType.word())
+                .then(Commands.argument("target", KoreanCommandArguments.word())
                         .suggests((ctx, builder) -> {
                             Bukkit.getOnlinePlayers().forEach(p -> builder.suggest(p.getName()));
                             return builder.buildFuture();
@@ -186,7 +190,7 @@ public final class UntBrigadierCommands {
                         .executes(ctx -> {
                             final Player target = Bukkit.getPlayerExact(StringArgumentType.getString(ctx, "target"));
                             if (target == null) {
-                                msg(plugin, ctx.getSource().getSender(), "<red>Player not found or not online.</red>");
+                                msg(plugin, ctx.getSource().getSender(), "<red>접속 중인 플레이어를 찾을 수 없습니다.</red>");
                                 return 0;
                             }
                             plugin.getNametagManager().showToTrackedPlayers(target);
@@ -196,9 +200,9 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalRefresh(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("refresh")
+        return Commands.literal("갱신")
                 .requires(stack -> stack.getSender().hasPermission("unt.refresh"))
-                .then(Commands.argument("target", StringArgumentType.word())
+                .then(Commands.argument("target", KoreanCommandArguments.word())
                         .suggests((ctx, builder) -> {
                             Bukkit.getOnlinePlayers().forEach(p -> builder.suggest(p.getName()));
                             return builder.buildFuture();
@@ -206,12 +210,12 @@ public final class UntBrigadierCommands {
                         .executes(ctx -> {
                             final Player target = Bukkit.getPlayerExact(StringArgumentType.getString(ctx, "target"));
                             if (target == null) {
-                                msg(plugin, ctx.getSource().getSender(), "<red>Player not found or not online.</red>");
+                                msg(plugin, ctx.getSource().getSender(), "<red>접속 중인 플레이어를 찾을 수 없습니다.</red>");
                                 return 0;
                             }
                             plugin.getNametagManager().refresh(target, true);
                             msg(plugin, ctx.getSource().getSender(),
-                                    "<green>Nametag refreshed for <yellow><name></yellow>.</green>",
+                                    "<green><yellow><name></yellow>님의 이름표를 갱신했습니다.</green>",
                                     Placeholder.unparsed("name", target.getName()));
                             return Command.SINGLE_SUCCESS;
                         }));
@@ -219,13 +223,13 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalBillboard(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("billboard")
+        return Commands.literal("회전방식")
                 .requires(stack -> stack.getSender().hasPermission("unt.billboard"))
-                .then(Commands.argument("constraint", StringArgumentType.word())
+                .then(Commands.argument("constraint", KoreanCommandArguments.word())
                         .suggests((ctx, builder) -> {
                             for (AbstractDisplayMeta.BillboardConstraints c :
                                     AbstractDisplayMeta.BillboardConstraints.values()) {
-                                builder.suggest(c.name());
+                                builder.suggest(KoreanCommandArguments.displayName(c.name()));
                             }
                             return builder.buildFuture();
                         })
@@ -233,17 +237,17 @@ public final class UntBrigadierCommands {
                             final String raw = StringArgumentType.getString(ctx, "constraint");
                             try {
                                 final AbstractDisplayMeta.BillboardConstraints c =
-                                        AbstractDisplayMeta.BillboardConstraints.valueOf(raw.toUpperCase());
+                                        AbstractDisplayMeta.BillboardConstraints.valueOf(KoreanCommandArguments.enumName(raw));
                                 plugin.getConfigManager().getSettings().getBehavior().setDefaultBillboard(c);
                                 plugin.getConfigManager().save();
                                 plugin.getNametagManager().reload();
                                 msg(plugin, ctx.getSource().getSender(),
-                                        "<green>Default billboard set to <yellow><value></yellow></green>",
-                                        Placeholder.unparsed("value", c.name()));
+                                        "<green>기본 회전 방식: <yellow><value></yellow></green>",
+                                        Placeholder.unparsed("value", KoreanCommandArguments.displayName(c.name())));
                                 return Command.SINGLE_SUCCESS;
                             } catch (IllegalArgumentException e) {
                                 msg(plugin, ctx.getSource().getSender(),
-                                        "<red>Invalid billboard: <gray><value></gray></red>",
+                                        "<red>잘못된 회전 방식: <gray><value></gray></red>",
                                         Placeholder.unparsed("value", raw));
                                 return 0;
                             }
@@ -252,29 +256,29 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalFormatter(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("formatter")
+        return Commands.literal("문자형식")
                 .requires(stack -> stack.getSender().hasPermission("unt.formatter"))
-                .then(Commands.argument("name", StringArgumentType.word())
+                .then(Commands.argument("name", KoreanCommandArguments.word())
                         .suggests((ctx, builder) -> {
                             for (TextFormatter f : TextFormatter.values()) {
-                                builder.suggest(f.name());
+                                builder.suggest(KoreanCommandArguments.displayName(f.name()));
                             }
                             return builder.buildFuture();
                         })
                         .executes(ctx -> {
                             final String raw = StringArgumentType.getString(ctx, "name");
                             try {
-                                final TextFormatter f = TextFormatter.valueOf(raw.toUpperCase());
+                                final TextFormatter f = TextFormatter.valueOf(KoreanCommandArguments.enumName(raw));
                                 plugin.getConfigManager().getSettings().getBehavior().setFormat(f);
                                 plugin.getConfigManager().save();
                                 plugin.getNametagManager().reload();
                                 msg(plugin, ctx.getSource().getSender(),
-                                        "<green>Default formatter set to <yellow><value></yellow></green>",
-                                        Placeholder.unparsed("value", f.name()));
+                                        "<green>기본 문자 형식: <yellow><value></yellow></green>",
+                                        Placeholder.unparsed("value", KoreanCommandArguments.displayName(f.name())));
                                 return Command.SINGLE_SUCCESS;
                             } catch (IllegalArgumentException e) {
                                 msg(plugin, ctx.getSource().getSender(),
-                                        "<red>Invalid formatter: <gray><value></gray></red>",
+                                        "<red>잘못된 문자 형식: <gray><value></gray></red>",
                                         Placeholder.unparsed("value", raw));
                                 return 0;
                             }
@@ -283,30 +287,30 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalHideOtherNametags(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("hideOtherNametags")
+        return Commands.literal("다른이름표숨기기")
                 .requires(stack -> stack.getSender().hasPermission("unt.hideOtherNametags"))
                 .executes(ctx -> {
                     if (!(ctx.getSource().getSender() instanceof Player p)) {
-                        msg(plugin, ctx.getSource().getSender(), "<red>Players only.</red>");
+                        msg(plugin, ctx.getSource().getSender(), "<red>플레이어만 사용할 수 있습니다.</red>");
                         return 0;
                     }
                     if (!plugin.getNametagManager().isHiddenOtherNametags(p)) {
                         plugin.getNametagManager().hideOtherNametags(p);
-                        msg(plugin, p, "<green>Other nametags hidden</green>");
+                        msg(plugin, p, "<green>다른 플레이어의 이름표를 숨겼습니다</green>");
                     }
                     return Command.SINGLE_SUCCESS;
                 })
-                .then(Commands.argument("silent", BoolArgumentType.bool())
+                .then(Commands.argument("silent", KoreanCommandArguments.toggle())
                         .executes(ctx -> {
                             if (!(ctx.getSource().getSender() instanceof Player p)) {
-                                msg(plugin, ctx.getSource().getSender(), "<red>Players only.</red>");
+                                msg(plugin, ctx.getSource().getSender(), "<red>플레이어만 사용할 수 있습니다.</red>");
                                 return 0;
                             }
                             final boolean silent = BoolArgumentType.getBool(ctx, "silent");
                             if (!plugin.getNametagManager().isHiddenOtherNametags(p)) {
                                 plugin.getNametagManager().hideOtherNametags(p);
                                 if (!silent) {
-                                    msg(plugin, p, "<green>Other nametags hidden</green>");
+                                    msg(plugin, p, "<green>다른 플레이어의 이름표를 숨겼습니다</green>");
                                 }
                             }
                             return Command.SINGLE_SUCCESS;
@@ -315,30 +319,30 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalShowOtherNametags(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("showOtherNametags")
+        return Commands.literal("다른이름표보기")
                 .requires(stack -> stack.getSender().hasPermission("unt.showOtherNametags"))
                 .executes(ctx -> {
                     if (!(ctx.getSource().getSender() instanceof Player p)) {
-                        msg(plugin, ctx.getSource().getSender(), "<red>Players only.</red>");
+                        msg(plugin, ctx.getSource().getSender(), "<red>플레이어만 사용할 수 있습니다.</red>");
                         return 0;
                     }
                     if (plugin.getNametagManager().isHiddenOtherNametags(p)) {
                         plugin.getNametagManager().showOtherNametags(p);
-                        msg(plugin, p, "<green>Other nametags shown</green>");
+                        msg(plugin, p, "<green>다른 플레이어의 이름표를 표시합니다</green>");
                     }
                     return Command.SINGLE_SUCCESS;
                 })
-                .then(Commands.argument("silent", BoolArgumentType.bool())
+                .then(Commands.argument("silent", KoreanCommandArguments.toggle())
                         .executes(ctx -> {
                             if (!(ctx.getSource().getSender() instanceof Player p)) {
-                                msg(plugin, ctx.getSource().getSender(), "<red>Players only.</red>");
+                                msg(plugin, ctx.getSource().getSender(), "<red>플레이어만 사용할 수 있습니다.</red>");
                                 return 0;
                             }
                             final boolean silent = BoolArgumentType.getBool(ctx, "silent");
                             if (plugin.getNametagManager().isHiddenOtherNametags(p)) {
                                 plugin.getNametagManager().showOtherNametags(p);
                                 if (!silent) {
-                                    msg(plugin, p, "<green>Other nametags shown</green>");
+                                    msg(plugin, p, "<green>다른 플레이어의 이름표를 표시합니다</green>");
                                 }
                             }
                             return Command.SINGLE_SUCCESS;
@@ -347,31 +351,31 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalPreferences(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("preferences")
+        return Commands.literal("설정")
                 .requires(stack -> stack.getSender().hasPermission("unt.preferences"))
                 .executes(ctx -> {
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt preferences get</yellow> <dark_gray>[player]</dark_gray>");
+                            "<yellow>/네임태그 설정 조회</yellow> <dark_gray>[플레이어]</dark_gray>");
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt preferences seeothers</yellow> <gray>true/false</gray> <dark_gray>[player]</dark_gray>");
+                            "<yellow>/네임태그 설정 다른이름표보기</yellow> <gray>활성/비활성</gray> <dark_gray>[플레이어]</dark_gray>");
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt preferences showown</yellow> <gray>true/false</gray> <dark_gray>[player]</dark_gray>");
+                            "<yellow>/네임태그 설정 내이름표보기</yellow> <gray>활성/비활성</gray> <dark_gray>[플레이어]</dark_gray>");
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt preferences showothers</yellow> <gray>true/false</gray> <dark_gray>[player]</dark_gray>");
+                            "<yellow>/네임태그 설정 내이름표공개</yellow> <gray>활성/비활성</gray> <dark_gray>[플레이어]</dark_gray>");
                     return Command.SINGLE_SUCCESS;
                 })
-                .then(Commands.literal("get")
+                .then(Commands.literal("조회")
                         .executes(ctx -> {
                             if (!(ctx.getSource().getSender() instanceof Player p)) {
                                 msg(plugin, ctx.getSource().getSender(),
-                                        "<red>Players only (or use /unt preferences get <player>).</red>");
+                                        "<red>플레이어만 사용하거나 /네임태그 설정 조회 [플레이어]를 입력하세요.</red>");
                                 return 0;
                             }
                             sendPreferenceLines(plugin, ctx.getSource().getSender(),
-                                    "<gray>Your nametag preferences</gray> <dark_gray>(<white><name></white>)</dark_gray>:", p);
+                                    "<gray>내 이름표 설정</gray> <dark_gray>(<white><name></white>)</dark_gray>:", p);
                             return Command.SINGLE_SUCCESS;
                         })
-                        .then(Commands.argument("target", StringArgumentType.word())
+                        .then(Commands.argument("target", KoreanCommandArguments.word())
                                 .requires(stack -> stack.getSender().hasPermission("unt.preferences.others"))
                                 .suggests((ctx, builder) -> {
                                     Bukkit.getOnlinePlayers().forEach(player -> builder.suggest(player.getName()));
@@ -382,20 +386,20 @@ public final class UntBrigadierCommands {
                                             StringArgumentType.getString(ctx, "target"));
                                     if (target == null) {
                                         msg(plugin, ctx.getSource().getSender(),
-                                                "<red>Player not found or not online.</red>");
+                                                "<red>접속 중인 플레이어를 찾을 수 없습니다.</red>");
                                         return 0;
                                     }
                                     sendPreferenceLines(plugin, ctx.getSource().getSender(),
-                                            "<gray>Nametag preferences for</gray> <yellow><name></yellow><gray>:</gray>", target);
+                                            "<gray>이름표 설정 대상:</gray> <yellow><name></yellow><gray>:</gray>", target);
                                     return Command.SINGLE_SUCCESS;
                                 })))
-                .then(Commands.literal("seeothers")
-                        .then(Commands.argument("value", BoolArgumentType.bool())
+                .then(Commands.literal("다른이름표보기")
+                        .then(Commands.argument("value", KoreanCommandArguments.toggle())
                                 .executes(ctx -> {
                                     final boolean v = BoolArgumentType.getBool(ctx, "value");
                                     return execSeeOthersSelf(plugin, ctx.getSource().getSender(), v);
                                 })
-                                .then(Commands.argument("target", StringArgumentType.word())
+                                .then(Commands.argument("target", KoreanCommandArguments.word())
                                         .requires(stack -> stack.getSender().hasPermission("unt.preferences.others"))
                                         .suggests((ctx, builder) -> {
                                             Bukkit.getOnlinePlayers().forEach(p -> builder.suggest(p.getName()));
@@ -407,18 +411,18 @@ public final class UntBrigadierCommands {
                                                     StringArgumentType.getString(ctx, "target"));
                                             if (target == null) {
                                                 msg(plugin, ctx.getSource().getSender(),
-                                                        "<red>Player not found or not online.</red>");
+                                                        "<red>접속 중인 플레이어를 찾을 수 없습니다.</red>");
                                                 return 0;
                                             }
                                             return applySeeOthers(plugin, ctx.getSource().getSender(), target, v);
                                         }))))
-                .then(Commands.literal("showown")
-                        .then(Commands.argument("value", BoolArgumentType.bool())
+                .then(Commands.literal("내이름표보기")
+                        .then(Commands.argument("value", KoreanCommandArguments.toggle())
                                 .executes(ctx -> {
                                     final boolean v = BoolArgumentType.getBool(ctx, "value");
                                     return execShowOwnSelf(plugin, ctx.getSource().getSender(), v);
                                 })
-                                .then(Commands.argument("target", StringArgumentType.word())
+                                .then(Commands.argument("target", KoreanCommandArguments.word())
                                         .requires(stack -> stack.getSender().hasPermission("unt.preferences.others"))
                                         .suggests((ctx, builder) -> {
                                             Bukkit.getOnlinePlayers().forEach(p -> builder.suggest(p.getName()));
@@ -430,23 +434,23 @@ public final class UntBrigadierCommands {
                                                     StringArgumentType.getString(ctx, "target"));
                                             if (target == null) {
                                                 msg(plugin, ctx.getSource().getSender(),
-                                                        "<red>Player not found or not online.</red>");
+                                                        "<red>접속 중인 플레이어를 찾을 수 없습니다.</red>");
                                                 return 0;
                                             }
                                             plugin.getNametagManager().setShowingOwnNametagToSelf(target, v);
                                             msg(plugin, ctx.getSource().getSender(),
-                                                    "<green>Set show-own (self) for <yellow><name></yellow> to <yellow><state></yellow></green>",
+                                                    "<green><yellow><name></yellow>님의 내 이름표 보기: <yellow><state></yellow></green>",
                                                     Placeholder.unparsed("name", target.getName()),
-                                                    Placeholder.unparsed("state", String.valueOf(v)));
+                                                    Placeholder.unparsed("state", state(v)));
                                             return Command.SINGLE_SUCCESS;
                                         }))))
-                .then(Commands.literal("showothers")
-                        .then(Commands.argument("value", BoolArgumentType.bool())
+                .then(Commands.literal("내이름표공개")
+                        .then(Commands.argument("value", KoreanCommandArguments.toggle())
                                 .executes(ctx -> {
                                     final boolean v = BoolArgumentType.getBool(ctx, "value");
                                     return execShowOthersSelf(plugin, ctx.getSource().getSender(), v);
                                 })
-                                .then(Commands.argument("target", StringArgumentType.word())
+                                .then(Commands.argument("target", KoreanCommandArguments.word())
                                         .requires(stack -> stack.getSender().hasPermission("unt.preferences.others"))
                                         .suggests((ctx, builder) -> {
                                             Bukkit.getOnlinePlayers().forEach(p -> builder.suggest(p.getName()));
@@ -458,14 +462,14 @@ public final class UntBrigadierCommands {
                                                     StringArgumentType.getString(ctx, "target"));
                                             if (target == null) {
                                                 msg(plugin, ctx.getSource().getSender(),
-                                                        "<red>Player not found or not online.</red>");
+                                                        "<red>접속 중인 플레이어를 찾을 수 없습니다.</red>");
                                                 return 0;
                                             }
                                             plugin.getNametagManager().setShowingOwnNametagToOthers(target, v);
                                             msg(plugin, ctx.getSource().getSender(),
-                                                    "<green>Set show-own-to-others for <yellow><name></yellow> to <yellow><state></yellow></green>",
+                                                    "<green><yellow><name></yellow>님의 이름표 공개: <yellow><state></yellow></green>",
                                                     Placeholder.unparsed("name", target.getName()),
-                                                    Placeholder.unparsed("state", String.valueOf(v)));
+                                                    Placeholder.unparsed("state", state(v)));
                                             return Command.SINGLE_SUCCESS;
                                         }))));
     }
@@ -473,7 +477,7 @@ public final class UntBrigadierCommands {
     private static int execSeeOthersSelf(@NotNull UnlimitedNameTags plugin, @NotNull CommandSender sender,
             boolean seeOthers) {
         if (!(sender instanceof Player p)) {
-            msg(plugin, sender, "<red>Players only (or specify a target with permission).</red>");
+            msg(plugin, sender, "<red>플레이어만 사용하거나 권한이 있는 대상 플레이어를 지정하세요.</red>");
             return 0;
         }
         return applySeeOthers(plugin, sender, p, seeOthers);
@@ -487,58 +491,58 @@ public final class UntBrigadierCommands {
             plugin.getNametagManager().hideOtherNametags(target);
         }
         msg(plugin, feedback,
-                "<green>Set seeing others' nametags for <yellow><name></yellow> to <yellow><state></yellow></green>",
+                "<green><yellow><name></yellow>님의 다른 이름표 보기: <yellow><state></yellow></green>",
                 Placeholder.unparsed("name", target.getName()),
-                Placeholder.unparsed("state", String.valueOf(seeOthers)));
+                Placeholder.unparsed("state", state(seeOthers)));
         return Command.SINGLE_SUCCESS;
     }
 
     private static int execShowOwnSelf(@NotNull UnlimitedNameTags plugin, @NotNull CommandSender sender,
             boolean show) {
         if (!(sender instanceof Player p)) {
-            msg(plugin, sender, "<red>Players only (or specify a target with permission).</red>");
+            msg(plugin, sender, "<red>플레이어만 사용하거나 권한이 있는 대상 플레이어를 지정하세요.</red>");
             return 0;
         }
         plugin.getNametagManager().setShowingOwnNametagToSelf(p, show);
-        msg(plugin, sender, "<green>Your show-own (self) is now <yellow><state></yellow></green>",
-                Placeholder.unparsed("state", String.valueOf(show)));
+        msg(plugin, sender, "<green>내 이름표 보기: <yellow><state></yellow></green>",
+                Placeholder.unparsed("state", state(show)));
         return Command.SINGLE_SUCCESS;
     }
 
     private static int execShowOthersSelf(@NotNull UnlimitedNameTags plugin, @NotNull CommandSender sender,
             boolean show) {
         if (!(sender instanceof Player p)) {
-            msg(plugin, sender, "<red>Players only (or specify a target with permission).</red>");
+            msg(plugin, sender, "<red>플레이어만 사용하거나 권한이 있는 대상 플레이어를 지정하세요.</red>");
             return 0;
         }
         plugin.getNametagManager().setShowingOwnNametagToOthers(p, show);
-        msg(plugin, sender, "<green>Your nametag visibility to others is now <yellow><state></yellow></green>",
-                Placeholder.unparsed("state", String.valueOf(show)));
+        msg(plugin, sender, "<green>내 이름표 공개: <yellow><state></yellow></green>",
+                Placeholder.unparsed("state", state(show)));
         return Command.SINGLE_SUCCESS;
     }
 
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> literalGlow(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.literal("glow")
+        return Commands.literal("발광")
                 .requires(stack -> stack.getSender().hasPermission("unt.glow"))
                 .executes(ctx -> {
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt glow fixed</yellow> <gray><player> <group> <color></gray>");
+                            "<yellow>/네임태그 발광 고정</yellow> <gray>[플레이어] [그룹] [색상]</gray>");
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt glow animation</yellow> <gray><id> [player] [group]</gray>");
+                            "<yellow>/네임태그 발광 애니메이션</yellow> <gray>[식별자] [플레이어] [그룹]</gray>");
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt glow rate</yellow> <gray><rate> <id> [player] [group]</gray>");
+                            "<yellow>/네임태그 발광 배속</yellow> <gray>[배속] [식별자] [플레이어] [그룹]</gray>");
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt glow rainbow</yellow> <gray><player> <group> [speed]</gray>");
+                            "<yellow>/네임태그 발광 무지개</yellow> <gray>[플레이어] [그룹] [속도]</gray>");
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt glow gradient</yellow> <gray><player> <group> <color...> [interval]</gray>");
+                            "<yellow>/네임태그 발광 그라데이션</yellow> <gray>[플레이어] [그룹] [색상들] [간격 틱수]</gray>");
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt glow clear</yellow> <gray><player> [group]</gray>");
+                            "<yellow>/네임태그 발광 초기화</yellow> <gray>[플레이어] [그룹]</gray>");
                     msg(plugin, ctx.getSource().getSender(),
-                            "<yellow>/unt glow get</yellow> <gray>[player]</gray>");
+                            "<yellow>/네임태그 발광 조회</yellow> <gray>[플레이어]</gray>");
                     return Command.SINGLE_SUCCESS;
                 })
-                .then(glowPlayerArg(plugin, "fixed")
+                .then(glowPlayerArg(plugin, "고정")
                         .then(glowGroupArg(plugin)
                                 .then(Commands.argument("color", StringArgumentType.greedyString())
                                         .executes(ctx -> {
@@ -553,43 +557,43 @@ public final class UntBrigadierCommands {
                                             final String color = StringArgumentType.getString(ctx, "color").trim();
                                             if (!ColorStrings.isValid(color)) {
                                                 msg(plugin, ctx.getSource().getSender(),
-                                                        "<red>Invalid color. Use #RRGGBB or R,G,B.</red>");
+                                                        "<red>잘못된 색상입니다. #RRGGBB 또는 R,G,B를 입력하세요.</red>");
                                                 return 0;
                                             }
                                             plugin.getNametagManager().setDisplayGroupGlow(
                                                     target.getUniqueId(), group, NametagGlowOverrides.fixed(color), true);
                                             msg(plugin, ctx.getSource().getSender(),
-                                                    "<green>Set fixed glow on <yellow><name></yellow> group <yellow><group></yellow>.</green>",
+                                                    "<green><yellow><name></yellow>님의 <yellow><group></yellow>번 그룹에 고정 발광을 적용했습니다.</green>",
                                                     Placeholder.unparsed("name", target.getName()),
                                                     Placeholder.unparsed("group", String.valueOf(group)));
                                             return Command.SINGLE_SUCCESS;
                                         }))))
-                .then(Commands.literal("animation")
+                .then(Commands.literal("애니메이션")
                         .then(glowAnimationApplyTree(plugin, ctx -> 1.0)))
-                .then(Commands.literal("rate")
+                .then(Commands.literal("배속")
                         .then(Commands.argument("rate", DoubleArgumentType.doubleArg(0.01))
                                 .then(glowAnimationApplyTree(plugin,
                                         ctx -> DoubleArgumentType.getDouble(ctx, "rate")))))
-                .then(glowPlayerArg(plugin, "rainbow")
+                .then(glowPlayerArg(plugin, "무지개")
                         .then(glowGroupArg(plugin)
                                 .executes(ctx -> execGlowRainbow(plugin, ctx, 1.0))
                                 .then(Commands.argument("speed", DoubleArgumentType.doubleArg(0.01))
                                         .executes(ctx -> execGlowRainbow(plugin, ctx,
                                                 DoubleArgumentType.getDouble(ctx, "speed"))))))
-                .then(glowPlayerArg(plugin, "gradient")
+                .then(glowPlayerArg(plugin, "그라데이션")
                         .then(glowGroupArg(plugin)
                                 .then(Commands.argument("colors", StringArgumentType.greedyString())
                                         .executes(ctx -> execGlowGradient(plugin, ctx, 10)))))
-                .then(Commands.literal("clear")
+                .then(Commands.literal("초기화")
                         .then(glowRequiredTargetArg(plugin)
                                 .executes(ctx -> execGlowClearAll(plugin, ctx))
                                 .then(glowAnyGroupArg(plugin)
                                         .executes(ctx -> execGlowClearGroup(plugin, ctx)))))
-                .then(Commands.literal("get")
+                .then(Commands.literal("조회")
                         .executes(ctx -> {
                             if (!(ctx.getSource().getSender() instanceof Player self)) {
                                 msg(plugin, ctx.getSource().getSender(),
-                                        "<red>Players only (or /unt glow get <player>).</red>");
+                                        "<red>플레이어만 사용하거나 /네임태그 발광 조회 [플레이어]를 입력하세요.</red>");
                                 return 0;
                             }
                             sendGlowLines(plugin, ctx.getSource().getSender(), self);
@@ -613,7 +617,7 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, ?> glowAnimationIdArg(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.argument("animationId", StringArgumentType.word())
+        return Commands.argument("animationId", KoreanCommandArguments.word())
                 .suggests((ctx, builder) -> {
                     plugin.getKnownGlowAnimationIds().forEach(builder::suggest);
                     return builder.buildFuture();
@@ -637,7 +641,7 @@ public final class UntBrigadierCommands {
 
     private static com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, ?> glowRequiredTargetArg(
             @NotNull UnlimitedNameTags plugin) {
-        return Commands.argument("target", StringArgumentType.word())
+        return Commands.argument("target", KoreanCommandArguments.word())
                 .suggests((ctx, builder) -> {
                     Bukkit.getOnlinePlayers().forEach(player -> builder.suggest(player.getName()));
                     return builder.buildFuture();
@@ -690,13 +694,13 @@ public final class UntBrigadierCommands {
                 plugin.getNametagManager().getEffectiveNametag(target).displayGroups();
         if (groups.isEmpty()) {
             msg(plugin, ctx.getSource().getSender(),
-                    "<red><name> has no display groups.</red>",
+                    "<red><name>님에게 표시 그룹이 없습니다.</red>",
                     Placeholder.unparsed("name", target.getName()));
             return false;
         }
         if (group < 0 || group >= groups.size()) {
             msg(plugin, ctx.getSource().getSender(),
-                    "<red>Invalid group <yellow><group></yellow> for <yellow><name></yellow> (0-<max>).</red>",
+                    "<red><yellow><name></yellow>님의 그룹 번호 <yellow><group></yellow>이 잘못되었습니다 (0~<max>).</red>",
                     Placeholder.unparsed("group", String.valueOf(group)),
                     Placeholder.unparsed("name", target.getName()),
                     Placeholder.unparsed("max", String.valueOf(groups.size() - 1)));
@@ -704,7 +708,7 @@ public final class UntBrigadierCommands {
         }
         if (groups.get(group).resolvedDisplayType() == NametagDisplayType.TEXT) {
             msg(plugin, ctx.getSource().getSender(),
-                    "<red>Display group <yellow><group></yellow> for <yellow><name></yellow> is TEXT; glow overrides apply only to ITEM or BLOCK groups.</red>",
+                    "<red><yellow><name></yellow>님의 <yellow><group></yellow>번 그룹은 텍스트입니다. 발광은 아이템·블록 그룹에만 적용됩니다.</red>",
                     Placeholder.unparsed("group", String.valueOf(group)),
                     Placeholder.unparsed("name", target.getName()));
             return false;
@@ -739,7 +743,7 @@ public final class UntBrigadierCommands {
             }
             if (messageOnMissingSelf) {
                 msg(plugin, ctx.getSource().getSender(),
-                        "<red>Players only (or specify a target).</red>");
+                        "<red>플레이어만 사용하거나 대상 플레이어를 지정하세요.</red>");
             }
             return null;
         }
@@ -753,11 +757,11 @@ public final class UntBrigadierCommands {
         final String name = StringArgumentType.getString(ctx, "target");
         final Player target = Bukkit.getPlayerExact(name);
         if (target == null) {
-            msg(plugin, sender, "<red>Player not found or not online.</red>");
+            msg(plugin, sender, "<red>접속 중인 플레이어를 찾을 수 없습니다.</red>");
             return null;
         }
         if (!sender.equals(target) && !sender.hasPermission("unt.glow.others")) {
-            msg(plugin, sender, "<red>You may not modify other players' glow.</red>");
+            msg(plugin, sender, "<red>다른 플레이어의 발광을 수정할 권한이 없습니다.</red>");
             return null;
         }
         return target;
@@ -771,7 +775,7 @@ public final class UntBrigadierCommands {
         if (sender instanceof Player player) {
             return player;
         }
-        msg(plugin, sender, "<red>Players only (or specify a target).</red>");
+        msg(plugin, sender, "<red>플레이어만 사용하거나 대상 플레이어를 지정하세요.</red>");
         return null;
     }
 
@@ -808,7 +812,7 @@ public final class UntBrigadierCommands {
         final String id = StringArgumentType.getString(ctx, "animationId");
         if (!plugin.isKnownGlowAnimationId(id)) {
             msg(plugin, ctx.getSource().getSender(),
-                    "<red>Unknown glow animation: <gray><id></gray></red>",
+                    "<red>등록되지 않은 발광 애니메이션: <gray><id></gray></red>",
                     Placeholder.unparsed("id", id));
             return 0;
         }
@@ -816,7 +820,7 @@ public final class UntBrigadierCommands {
         final int groupCount = glowDisplayGroupCount(plugin, target);
         if (groupCount == 0) {
             msg(plugin, ctx.getSource().getSender(),
-                    "<red><name> has no display groups.</red>",
+                    "<red><name>님에게 표시 그룹이 없습니다.</red>",
                     Placeholder.unparsed("name", target.getName()));
             return 0;
         }
@@ -829,7 +833,7 @@ public final class UntBrigadierCommands {
             final List<Integer> applicableGroups = glowApplicableGroups(plugin, target);
             if (applicableGroups.isEmpty()) {
                 msg(plugin, ctx.getSource().getSender(),
-                        "<red><name> has no ITEM or BLOCK display groups for glow.</red>",
+                        "<red><name>님에게 발광을 적용할 아이템·블록 그룹이 없습니다.</red>",
                         Placeholder.unparsed("name", target.getName()));
                 return 0;
             }
@@ -843,25 +847,25 @@ public final class UntBrigadierCommands {
         if (rate == 1.0) {
             if (allGroups) {
                 msg(plugin, ctx.getSource().getSender(),
-                        "<green>Set glow animation <yellow><id></yellow> on <yellow><name></yellow>.</green>",
+                        "<green><yellow><name></yellow>님에 발광 애니메이션 <yellow><id></yellow>을 적용했습니다.</green>",
                         Placeholder.unparsed("id", id),
                         Placeholder.unparsed("name", target.getName()));
             } else {
                 msg(plugin, ctx.getSource().getSender(),
-                        "<green>Set glow animation <yellow><id></yellow> on <yellow><name></yellow> group <yellow><group></yellow>.</green>",
+                        "<green><yellow><name></yellow>님의 <yellow><group></yellow>번 그룹에 발광 애니메이션 <yellow><id></yellow>을 적용했습니다.</green>",
                         Placeholder.unparsed("id", id),
                         Placeholder.unparsed("name", target.getName()),
                         Placeholder.unparsed("group", String.valueOf(group)));
             }
         } else if (allGroups) {
             msg(plugin, ctx.getSource().getSender(),
-                    "<green>Set glow animation <yellow><id></yellow> (rate <yellow><rate></yellow>) on <yellow><name></yellow>.</green>",
+                    "<green><yellow><name></yellow>님에 발광 애니메이션 <yellow><id></yellow> (배속 <yellow><rate></yellow>)을 적용했습니다.</green>",
                     Placeholder.unparsed("id", id),
                     Placeholder.unparsed("rate", String.valueOf(rate)),
                     Placeholder.unparsed("name", target.getName()));
         } else {
             msg(plugin, ctx.getSource().getSender(),
-                    "<green>Set glow animation <yellow><id></yellow> (rate <yellow><rate></yellow>) on <yellow><name></yellow> group <yellow><group></yellow>.</green>",
+                    "<green><yellow><name></yellow>님의 <yellow><group></yellow>번 그룹에 발광 애니메이션 <yellow><id></yellow> (배속 <yellow><rate></yellow>)을 적용했습니다.</green>",
                     Placeholder.unparsed("id", id),
                     Placeholder.unparsed("rate", String.valueOf(rate)),
                     Placeholder.unparsed("name", target.getName()),
@@ -885,7 +889,7 @@ public final class UntBrigadierCommands {
         plugin.getNametagManager().setDisplayGroupGlow(
                 target.getUniqueId(), group, NametagGlowOverrides.rainbow(speed), true);
         msg(plugin, ctx.getSource().getSender(),
-                "<green>Set rainbow glow on <yellow><name></yellow> group <yellow><group></yellow>.</green>",
+                "<green><yellow><name></yellow>님의 <yellow><group></yellow>번 그룹에 무지개 발광을 적용했습니다.</green>",
                 Placeholder.unparsed("name", target.getName()),
                 Placeholder.unparsed("group", String.valueOf(group)));
         return Command.SINGLE_SUCCESS;
@@ -908,39 +912,39 @@ public final class UntBrigadierCommands {
         int interval = defaultInterval;
         final List<String> colors = new java.util.ArrayList<>();
         for (int i = 0; i < tokens.length; i++) {
-            if (tokens[i].equalsIgnoreCase("interval")) {
+            if (tokens[i].equalsIgnoreCase("간격")) {
                 if (i + 1 >= tokens.length) {
-                    msg(plugin, ctx.getSource().getSender(), "<red>Missing value after interval.</red>");
+                    msg(plugin, ctx.getSource().getSender(), "<red>간격 뒤에 숫자를 입력하세요.</red>");
                     return 0;
                 }
                 try {
                     interval = Integer.parseInt(tokens[i + 1]);
                 } catch (NumberFormatException ignored) {
-                    msg(plugin, ctx.getSource().getSender(), "<red>Invalid gradient interval.</red>");
+                    msg(plugin, ctx.getSource().getSender(), "<red>그라데이션 간격이 잘못되었습니다.</red>");
                     return 0;
                 }
                 if (interval < 1) {
-                    msg(plugin, ctx.getSource().getSender(), "<red>Gradient interval must be at least 1.</red>");
+                    msg(plugin, ctx.getSource().getSender(), "<red>그라데이션 간격은 1 이상이어야 합니다.</red>");
                     return 0;
                 }
                 break;
             }
             if (!ColorStrings.isValid(tokens[i])) {
                 msg(plugin, ctx.getSource().getSender(),
-                        "<red>Invalid gradient color: <gray><color></gray></red>",
+                        "<red>잘못된 그라데이션 색상: <gray><color></gray></red>",
                         Placeholder.unparsed("color", tokens[i]));
                 return 0;
             }
             colors.add(tokens[i]);
         }
         if (colors.size() < 2) {
-            msg(plugin, ctx.getSource().getSender(), "<red>Gradient requires at least two colors.</red>");
+            msg(plugin, ctx.getSource().getSender(), "<red>그라데이션에는 색상이 2개 이상 필요합니다.</red>");
             return 0;
         }
         final GlowOverride.GradientGlowOverride gradient = NametagGlowOverrides.gradient(colors, interval);
         plugin.getNametagManager().setDisplayGroupGlow(target.getUniqueId(), group, gradient, true);
         msg(plugin, ctx.getSource().getSender(),
-                "<green>Set gradient glow on <yellow><name></yellow> group <yellow><group></yellow>.</green>",
+                "<green><yellow><name></yellow>님의 <yellow><group></yellow>번 그룹에 그라데이션 발광을 적용했습니다.</green>",
                 Placeholder.unparsed("name", target.getName()),
                 Placeholder.unparsed("group", String.valueOf(group)));
         return Command.SINGLE_SUCCESS;
@@ -960,7 +964,7 @@ public final class UntBrigadierCommands {
         plugin.getNametagManager().applyPersistentGlowOverrides(target);
         plugin.getNametagManager().refresh(target, false);
         msg(plugin, ctx.getSource().getSender(),
-                "<green>Cleared all glow overrides for <yellow><name></yellow>.</green>",
+                "<green><yellow><name></yellow>님의 발광 설정을 모두 초기화했습니다.</green>",
                 Placeholder.unparsed("name", target.getName()));
         return Command.SINGLE_SUCCESS;
     }
@@ -976,7 +980,7 @@ public final class UntBrigadierCommands {
         final int groupCount = glowDisplayGroupCount(plugin, target);
         if (group < 0 || group >= groupCount) {
             msg(plugin, ctx.getSource().getSender(),
-                    "<red>Invalid group <yellow><group></yellow> for <yellow><name></yellow> (0-<max>).</red>",
+                    "<red><yellow><name></yellow>님의 그룹 번호 <yellow><group></yellow>이 잘못되었습니다 (0~<max>).</red>",
                     Placeholder.unparsed("group", String.valueOf(group)),
                     Placeholder.unparsed("name", target.getName()),
                     Placeholder.unparsed("max", String.valueOf(groupCount - 1)));
@@ -984,7 +988,7 @@ public final class UntBrigadierCommands {
         }
         plugin.getNametagManager().clearDisplayGroupGlow(target.getUniqueId(), group, true);
         msg(plugin, ctx.getSource().getSender(),
-                "<green>Cleared glow on <yellow><name></yellow> group <yellow><group></yellow>.</green>",
+                "<green><yellow><name></yellow>님의 <yellow><group></yellow>번 그룹 발광을 초기화했습니다.</green>",
                 Placeholder.unparsed("name", target.getName()),
                 Placeholder.unparsed("group", String.valueOf(group)));
         return Command.SINGLE_SUCCESS;
@@ -994,14 +998,14 @@ public final class UntBrigadierCommands {
             @NotNull UnlimitedNameTags plugin,
             @NotNull CommandSender to,
             @NotNull Player subject) {
-        msg(plugin, to, "<gray>Glow overrides for</gray> <yellow><name></yellow><gray>:</gray>",
+        msg(plugin, to, "<gray>발광 설정 대상:</gray> <yellow><name></yellow><gray>:</gray>",
                 Placeholder.unparsed("name", subject.getName()));
         final int groups = plugin.getNametagManager().getEffectiveNametag(subject).displayGroups().size();
         for (int i = 0; i < groups; i++) {
             final String value = plugin.getNametagManager()
                     .getDisplayGroupGlowOverride(subject.getUniqueId(), i)
                     .map(g -> g.getClass().getSimpleName())
-                    .orElse("none");
+                    .orElse("없음");
             msg(plugin, to, "  <yellow><group></yellow><gray>:</gray> <white><value></white>",
                     Placeholder.unparsed("group", String.valueOf(i)),
                     Placeholder.unparsed("value", value));
