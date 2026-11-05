@@ -11,6 +11,10 @@ subprojects {
     apply(plugin = "java")
 
     repositories {
+        exclusiveContent {
+            forRepository { maven("https://mvn.lib.co.nz/public") }
+            filter { includeGroup("me.libraryaddict.disguises") }
+        }
         mavenCentral()
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.nexomc.com/snapshots/")

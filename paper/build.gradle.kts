@@ -101,7 +101,7 @@ tasks.named<ShadowJar>("shadowJar") {
     exclude("assets/mappings/item_base_components/**")
 
     destinationDirectory.set(file("${rootProject.projectDir}/target"))
-    archiveFileName.set("${rootProject.name}.jar")
+    archiveFileName.set("${rootProject.name}-${project.version}.jar")
 
     minimize()
 }
@@ -139,6 +139,7 @@ tasks {
 }
 
 tasks.processResources {
+    inputs.property("version", project.version)
     var compiled = true
     if (rootProject.file("license.txt").exists()) {
         compiled = false
@@ -164,3 +165,12 @@ tasks.processResources {
         )
     }
 }
+
+// Collect only the deployable plugin; API and plain jars stay in their module output directories.
+val collectPluginArtifact = tasks.register<Copy>("collectPluginArtifact") {
+    val artifact = tasks.named<ShadowJar>("shadowJar")
+    dependsOn(artifact)
+    from(artifact.flatMap { it.archiveFile })
+    into(rootProject.layout.projectDirectory.dir("../core/plugin"))
+}
+tasks.named("shadowJar") { finalizedBy(collectPluginArtifact) }
