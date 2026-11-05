@@ -25,7 +25,7 @@ public interface UnlimitedNameTagsInstance {
     List<HatHook> getHatHooks();
 
     /**
-     * Formats raw nametag text for display (MiniPlaceholders when available on Paper, else MiniMessage).
+     * Formats raw nametag text for display using MiniMessage.
      */
     @NotNull
     Component formatTextForNametag(@NotNull Audience audience, @NotNull String text);

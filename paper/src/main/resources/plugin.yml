@@ -4,7 +4,6 @@ description: 플레이어 머리 위 닉네임과 칭호를 표시하는 이름�
 main: org.alexdev.unlimitednametags.UnlimitedNameTags
 api-version: '26.3'
 author: pingpong
-folia-supported: true
 libraries:
   - net.jodah:expiringmap:${expiringMapVersion}
   - org.apache.commons:commons-jexl3:${commonsJexl3Version}

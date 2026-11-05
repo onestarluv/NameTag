@@ -41,7 +41,6 @@ public class PlayerListener implements PackSendHandler {
     private final Map<UUID, UUID> zeroDamageRecoveryRunIds;
     private final Map<UUID, UUID> gameModeRecoveryRunIds;
     private final Map<UUID, MyScheduledTask> respawnShowTasks;
-    private final Map<UUID, Location> playerWorlds;
     private static final long[] TELEPORT_SYNC_DELAYS = {5L, 20L, 60L, 100L};
 
     public PlayerListener(UnlimitedNameTags plugin) {
@@ -55,9 +54,7 @@ public class PlayerListener implements PackSendHandler {
         this.zeroDamageRecoveryRunIds = Maps.newConcurrentMap();
         this.gameModeRecoveryRunIds = Maps.newConcurrentMap();
         this.respawnShowTasks = Maps.newConcurrentMap();
-        this.playerWorlds = Maps.newConcurrentMap();
         this.loadRespawnSafetyTask();
-        this.loadFoliaTeleportEvent();
         this.loadEntityIds();
     }
 
@@ -73,7 +70,7 @@ public class PlayerListener implements PackSendHandler {
      * <p>
      * Covers edge cases where {@link PlayerRespawnEvent} never fires (e.g. revive plugins that restore health
      * directly, custom death flows) and same-tick death+respawn races where the scheduled show from
-     * {@link #scheduleRespawnShow(Player)} may have been skipped or cancelled. Runs on both Paper and Folia.
+     * {@link #scheduleRespawnShow(Player)} may have been skipped or cancelled. Runs on Paper.
      */
     private void loadRespawnSafetyTask() {
         plugin.getTaskScheduler().runTaskTimerAsynchronously(() -> diedPlayers.forEach(died -> {
@@ -94,42 +91,6 @@ public class PlayerListener implements PackSendHandler {
             cancelRespawnShow(died);
             plugin.getNametagManager().showToTrackedPlayers(player);
         }), 1, 1);
-    }
-
-    /**
-     *
-    * Folia does not fire {@link PlayerTeleportEvent} for async teleports, so we poll player locations every tick and detect world changes
-     * or large distance changes to trigger the same logic as a teleport event.
-    *
-     */
-    private void loadFoliaTeleportEvent() {
-        if (!isFolia()) {
-            return;
-        }
-
-        plugin.getLogger().info("Folia detected, using async teleport event for teleport sync");
-        plugin.getTaskScheduler().runTaskTimerAsynchronously(() -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                final UUID uuid = player.getUniqueId();
-                final Location lastLocation = playerWorlds.getOrDefault(uuid, player.getLocation());
-                final Location currentLocation = player.getLocation();
-                if (!lastLocation.getWorld().equals(currentLocation.getWorld())
-                        || lastLocation.distanceSquared(currentLocation) > 64*64) {
-                    handlePositionChange(player, lastLocation, currentLocation);
-                }
-
-                playerWorlds.put(uuid, currentLocation);
-            }
-        }, 1, 10);
-    }
-
-    private boolean isFolia() {
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 
     public Optional<Player> getPlayerFromEntityId(int entityId) {
@@ -216,7 +177,6 @@ public class PlayerListener implements PackSendHandler {
         diedPlayers.remove(event.getPlayer().getUniqueId());
         onlinePlayers.remove(event.getPlayer().getUniqueId(), event.getPlayer());
         playerEntityId.remove(event.getPlayer().getEntityId());
-        playerWorlds.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

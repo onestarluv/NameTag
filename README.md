@@ -7,9 +7,9 @@ UnlimitedNameTags를 기반으로 수정했습니다. 원본 라이선스와 저
 ## 실행 환경
 
 - 현재 빌드는 Java 25와 Paper 26.3 API를 대상으로 합니다. 서버에서도 Java 25 이상이 필요합니다.
-- Paper 또는 호환 서버와 PacketEvents가 필요합니다. Folia용 스케줄러도 포함합니다.
+- Paper 또는 호환 서버와 PacketEvents가 필요합니다. Folia는 지원하지 않습니다.
 - Nexo 연동으로 모자 높이에 맞춰 이름표 위치를 조정합니다.
-- PlaceholderAPI, MiniPlaceholders 등은 해당 기능을 사용할 때 설치합니다.
+- PlaceholderAPI는 플레이스홀더 연동 기능을 사용할 때 설치합니다.
 
 ## 설치
 

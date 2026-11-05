@@ -237,8 +237,7 @@ public class Settings {
 
         @Comment({
                 "Whether to cache components for some time and reuse them.",
-                "Useful for performance when a lot of gradients are used, but uses more memory.",
-                "May cause problems with MiniPlaceholders, so disabled by default."
+                "Useful for performance when a lot of gradients are used, but uses more memory."
         })
         private boolean componentCaching = false;
 

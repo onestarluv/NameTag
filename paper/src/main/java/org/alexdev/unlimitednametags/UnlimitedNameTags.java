@@ -215,10 +215,6 @@ public final class UnlimitedNameTags extends JavaPlugin implements UnlimitedName
             getLogger().info("TypeWriter found, hooking into it");
         }
 
-        if (Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
-            hooks.put(MiniPlaceholdersHook.class, new MiniPlaceholdersHook(this));
-            getLogger().info("MiniPlaceholders found, hooking into it");
-        }
 
         if (Bukkit.getPluginManager().isPluginEnabled("Nexo")) {
             getLogger().info("Nexo found, hooking into it");
@@ -410,11 +406,6 @@ public final class UnlimitedNameTags extends JavaPlugin implements UnlimitedName
 
     @Override
     public @NotNull Component formatTextForNametag(@NotNull CommandSender audience, @NotNull String text) {
-        if (audience instanceof Player player) {
-            return getHook(MiniPlaceholdersHook.class)
-                    .map(h -> h.format(text, player))
-                    .orElseGet(() -> MiniMessage.miniMessage().deserialize(text));
-        }
         return MiniMessage.miniMessage().deserialize(text);
     }
 
