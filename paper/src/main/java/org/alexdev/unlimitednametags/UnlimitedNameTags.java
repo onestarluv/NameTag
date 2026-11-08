@@ -161,7 +161,6 @@ public final class UnlimitedNameTags extends JavaPlugin implements UnlimitedName
     private void loadListeners() {
         playerListener = new PlayerListener(this);
         Bukkit.getPluginManager().registerEvents(playerListener, this);
-        Bukkit.getPluginManager().registerEvents(new OtherListener(this), this);
 
 
         if (isPaper) {

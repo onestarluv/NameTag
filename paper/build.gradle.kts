@@ -17,7 +17,7 @@ dependencies {
         exclude(group = "com.github.Tofaa2.EntityLib")
         exclude(group = "me.tofaa2")
     }
-    compileOnly(libs.placeholderapi)
+    compileOnly("kr.gomsv:Kokonut-Core:cbt-1.0")
     compileOnly(libs.floodgateApi)
     compileOnly(libs.geyserApi)
     compileOnly(libs.configlib)
@@ -125,7 +125,6 @@ tasks {
         minecraftVersion("26.3")
 
         downloadPlugins {
-            //hangar("PlaceholderAPI", "2.12.2")
             modrinth("luckperms", "v5.4.145-bukkit")
             modrinth("multiverse-core", "4.3.14")
             modrinth("essentialsx", "2.22.0")
@@ -171,6 +170,14 @@ val collectPluginArtifact = tasks.register<Copy>("collectPluginArtifact") {
     val artifact = tasks.named<ShadowJar>("shadowJar")
     dependsOn(artifact)
     from(artifact.flatMap { it.archiveFile })
-    into(rootProject.layout.projectDirectory.dir("../core/plugin"))
+    into(rootProject.layout.projectDirectory.dir("../plugin"))
 }
 tasks.named("shadowJar") { finalizedBy(collectPluginArtifact) }
+// 테스트 서버 plugins 폴더로도 바로 복사한다 (-PdeployDir=... 로 경로 변경 가능).
+val deployPluginArtifact = tasks.register<Copy>("deployPluginArtifact") {
+    val artifact = tasks.named<org.gradle.api.tasks.bundling.AbstractArchiveTask>("shadowJar")
+    dependsOn(artifact)
+    from(artifact.flatMap { it.archiveFile })
+    into(providers.gradleProperty("deployDir").orElse("D:/egoverse/home1/plugins"))
+}
+tasks.named("shadowJar") { finalizedBy(deployPluginArtifact) }

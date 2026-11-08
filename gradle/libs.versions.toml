@@ -3,7 +3,6 @@ paperApiVersion = "26.3.build.+"
 adventureApiVersion = "4.16.0"
 typeWriterVersion = "0.9.0"
 lombokVersion = "1.18.46"
-placeholderapiVersion = "2.11.6"
 floodgateApiVersion = "2.2.3-SNAPSHOT"
 geyserApiVersion = "2.4.2-SNAPSHOT"
 configlibVersion = "4.6.1"
@@ -30,7 +29,6 @@ paperApi = { module = "io.papermc.paper:paper-api", version.ref = "paperApiVersi
 adventureApi = { module = "net.kyori:adventure-api", version.ref = "adventureApiVersion" }
 typeWriter = { module = "com.typewritermc:engine-paper", version.ref = "typeWriterVersion" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombokVersion" }
-placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapiVersion" }
 floodgateApi = { module = "org.geysermc.floodgate:api", version.ref = "floodgateApiVersion" }
 geyserApi = { module = "org.geysermc.geyser:api", version.ref = "geyserApiVersion" }
 configlib = { module = "de.exlll:configlib-yaml", version.ref = "configlibVersion" }

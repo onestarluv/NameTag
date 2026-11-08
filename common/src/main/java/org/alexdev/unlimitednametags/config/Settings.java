@@ -69,25 +69,15 @@ public class Settings {
 
     // ─── Defaults ─────────────────────────────────────────────────────────────
 
+    /** Kokonut 고정 이름표: 칭호 한 줄 + 서버 닉네임 한 줄. 설정 파일 없이 이 값이 그대로 쓰인다. */
     private static Map<String, NameTag> defaultNameTags() {
         final Map<String, NameTag> m = new LinkedHashMap<>();
-        m.put("staffer", new NameTag("nametag.staffer", List.of(
+        m.put("default", new NameTag(null, List.of(
                 DisplayGroup.builder()
-                        .line("Staffer %luckperms_prefix% %player_name% %luckperms_suffix%")
+                        .line("%kokonut_title%")
+                        .line("%kokonut_nickname%")
                         .background(Background.ofRGB(false, 255, 0, 0, 255, true, false))
                         .scale(1f).yOffset(0.2f)
-                        .build())));
-        m.put("default", new NameTag("nametag.default", List.of(
-                DisplayGroup.builder()
-                        .line("%luckperms_prefix% %player_name% %luckperms_suffix%")
-                        .background(Background.ofRGB(false, 255, 0, 0, 255, true, false))
-                        .scale(1f).yOffset(0.2f)
-                        .when("%player_health% > 10")
-                        .build(),
-                DisplayGroup.builder()
-                        .line("Healthy Player!")
-                        .background(Background.ofHex(false, "#ffffff", 255, false, false))
-                        .scale(1f).yOffset(1.2f)
                         .build())));
         return m;
     }
@@ -103,11 +93,8 @@ public class Settings {
     }
 
     private static Map<String, List<PlaceholderReplacement>> defaultPlaceholdersReplacements() {
-        final Map<String, List<PlaceholderReplacement>> m = new LinkedHashMap<>();
-        m.put("%advancedvanish_is_vanished%", List.of(
-                new PlaceholderReplacement("Yes", " &7[V]&r"),
-                new PlaceholderReplacement("No", "")));
-        return m;
+        // PAPI를 쓰지 않으므로 PAPI 출력 문자열 치환 규칙도 없다.
+        return new LinkedHashMap<>();
     }
 
     // ─── Sub-sections ─────────────────────────────────────────────────────────

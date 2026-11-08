@@ -33,7 +33,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,7 +46,6 @@ public class PlaceholderManager {
     public static final String NEG_PHASE_MM_KEY = "-phase-mm";
     public static final String NEG_PHASE_MM_G_KEY = "-phase-mm-g";
 
-    private static final Pattern RELATIONAL_PATTERN = Pattern.compile("%(rel|relational)_[a-zA-Z0-9_]+%");
 
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("%.*?%", Pattern.DOTALL);
     private static final JoinConfiguration JOIN_CONFIGURATION = JoinConfiguration.separator(Component.newline());
@@ -57,7 +55,7 @@ public class PlaceholderManager {
     private static final int maxMIndex = 10;
     private final UnlimitedNameTags plugin;
     private final ExecutorService executorService;
-    private final PAPIManager papiManager;
+    private final KokonutPlaceholders kokonutPlaceholders;
     private int index = maxIndex;
     private int mmIndex = maxMIndex;
     private DecimalFormat decimalFormat;
@@ -77,7 +75,7 @@ public class PlaceholderManager {
         this.executorService = Executors.newWorkStealingPool(
                 Math.max(2, Runtime.getRuntime().availableProcessors() / 2)
         );
-        this.papiManager = new PAPIManager(plugin);
+        this.kokonutPlaceholders = new KokonutPlaceholders(plugin);
         this.cachedComponents = ExpiringMap.builder()
                 .expiration(2, TimeUnit.MINUTES)
                 .build();
@@ -124,6 +122,7 @@ public class PlaceholderManager {
 
     public void removePlayer(@NotNull Player player) {
         cachedPlaceholders.remove(player.getUniqueId());
+        kokonutPlaceholders.removePlayer(player.getUniqueId());
         HelmetRuleDebugThrottle.remove(player.getUniqueId());
     }
 
@@ -177,7 +176,7 @@ public class PlaceholderManager {
 
     public void close() {
         this.executorService.shutdown();
-        papiManager.close();
+        kokonutPlaceholders.close();
     }
 
 
@@ -202,7 +201,7 @@ public class PlaceholderManager {
      */
     @NotNull
     public String expandForOwner(@NotNull Player player, @NotNull String raw) {
-        return replacePlaceholders(raw, player, null);
+        return replacePlaceholders(raw, player);
     }
 
     /**
@@ -260,52 +259,15 @@ public class PlaceholderManager {
         final Settings settings = plugin.getConfigManager().getSettings();
         final boolean removeEmptyLines = settings.getBehavior().isRemoveEmptyLines();
 
-        final List<String> baseStrings = papiManager.isPapiEnabled() ?
-                strings.stream()
-                        .map(s -> replacePlaceholders(s, owner, null))
-                        .toList()
-                : strings;
-
-        final List<Component> processedLines = baseStrings.stream()
-                .map(line -> resolveRelationalPlaceholdersInText(line, owner, viewer))
+        // 관계형(%rel_...%) 플레이스홀더는 PAPI 전용이었으므로 더 이상 지원하지 않는다. 소유자 기준으로만 치환한다.
+        final List<Component> processedLines = strings.stream()
+                .map(s -> replacePlaceholders(s, owner))
                 .map(this::formatPhases)
                 .map(line -> format(line, owner))
                 .filter(c -> !removeEmptyLines || !c.equals(Component.empty()))
                 .toList();
 
         return joinLines(processedLines);
-    }
-
-    @NotNull
-    private String resolveRelationalPlaceholdersInText(@NotNull String text, @NotNull Player owner, @NotNull Player viewer) {
-        if (!papiManager.isPapiEnabled() || !containsRelationalPlaceholders(text)) {
-            return text;
-        }
-
-        return replaceRelationalPlaceholders(text, placeholder -> {
-            final String resolved = papiManager.setRelationalPlaceholders(viewer, owner, placeholder);
-            final String customReplacement = getReplacement(placeholder, resolved);
-            return customReplacement == null
-                    ? resolved
-                    : resolveCustomReplacement(customReplacement, owner, viewer);
-        });
-    }
-
-    @NotNull
-    static String replaceRelationalPlaceholders(@NotNull String text, @NotNull Function<String, String> replacementResolver) {
-        final StringBuilder builder = new StringBuilder(text.length() + 32);
-        final Matcher matcher = RELATIONAL_PATTERN.matcher(text);
-        int lastAppendPosition = 0;
-
-        while (matcher.find()) {
-            builder.append(text, lastAppendPosition, matcher.start());
-            final String placeholder = matcher.group();
-            builder.append(replacementResolver.apply(placeholder));
-            lastAppendPosition = matcher.end();
-        }
-
-        builder.append(text, lastAppendPosition, text.length());
-        return builder.toString();
     }
 
     @NotNull
@@ -320,43 +282,21 @@ public class PlaceholderManager {
         // in NameTagManager, so the component only carries the real text here.
         final Settings settings = plugin.getConfigManager().getSettings();
         final boolean removeEmptyLines = settings.getBehavior().isRemoveEmptyLines();
-        final boolean enableRelationalPlaceholders = settings.getPerformance().isEnableRelationalPlaceholders();
 
-        final List<String> baseStrings = papiManager.isPapiEnabled() ?
-                strings.stream()
-                        .map(s -> replacePlaceholders(s, player, null))
-                        .toList()
-                : strings;
-        final boolean hasRelationalPlaceholders = enableRelationalPlaceholders
-                && baseStrings.stream().anyMatch(PlaceholderManager::containsRelationalPlaceholders);
+        final List<Component> processedLines = strings.stream()
+                .map(s -> replacePlaceholders(s, player))
+                .map(this::formatPhases)
+                .map(line -> format(line, player))
+                .filter(c -> !removeEmptyLines || !c.equals(Component.empty()))
+                .toList();
 
-        if (hasRelationalPlaceholders) {
-            final Map<Player, Component> result = Maps.newHashMapWithExpectedSize(relationalPlayers.size());
-            for (Player viewer : relationalPlayers) {
-                final List<Component> processedLines = baseStrings.stream()
-                        .map(line -> resolveRelationalPlaceholdersInText(line, player, viewer))
-                        .map(this::formatPhases)
-                        .map(line -> format(line, player))
-                        .filter(c -> !removeEmptyLines || !c.equals(Component.empty()))
-                        .toList();
-                result.put(viewer, joinLines(processedLines));
-            }
-            return result;
-        } else {
-            final List<Component> processedLines = baseStrings.stream()
-                    .map(this::formatPhases)
-                    .map(line -> format(line, player))
-                    .filter(c -> !removeEmptyLines || !c.equals(Component.empty()))
-                    .toList();
+        final Component finalComponent = joinLines(processedLines);
 
-            final Component finalComponent = joinLines(processedLines);
-
-            final Map<Player, Component> result = Maps.newHashMapWithExpectedSize(relationalPlayers.size());
-            for (Player viewer : relationalPlayers) {
-                result.put(viewer, finalComponent);
-            }
-            return result;
+        final Map<Player, Component> result = Maps.newHashMapWithExpectedSize(relationalPlayers.size());
+        for (Player viewer : relationalPlayers) {
+            result.put(viewer, finalComponent);
         }
+        return result;
     }
 
     /**
@@ -528,7 +468,7 @@ public class PlaceholderManager {
     }
 
     @NotNull
-    private String replacePlaceholders(@NotNull String string, @NotNull Player player, @Nullable Player viewer) {
+    private String replacePlaceholders(@NotNull String string, @NotNull Player player) {
         if (!containsAnyPlaceholders(string)) {
             return string;
         }
@@ -540,38 +480,21 @@ public class PlaceholderManager {
         while (matcher.find()) {
             builder.append(string, lastAppendPosition, matcher.start());
             final String placeholder = matcher.group();
-            final String value = viewer == null ? getCachedPlaceholder(player, placeholder)
-                    : papiManager.setRelationalPlaceholders(viewer, player, placeholder);
+            final String value = getCachedPlaceholder(player, placeholder);
             final String customReplacement = getReplacement(placeholder, value);
-            builder.append(customReplacement != null ? customReplacement : value);
+            builder.append(customReplacement != null ? resolveCustomReplacement(customReplacement, player) : value);
             lastAppendPosition = matcher.end();
         }
 
         builder.append(string, lastAppendPosition, string.length());
-
-        final String intermediateResult = builder.toString();
-
-        if (papiManager.isPapiEnabled()) {
-            return viewer == null ? papiManager.setPlaceholders(player, intermediateResult)
-                    : papiManager.setRelationalPlaceholders(viewer, player, intermediateResult);
-        }
-
-        return intermediateResult;
+        return builder.toString();
     }
 
 
     @NotNull
-    private String resolveCustomReplacement(@NotNull String replacement, @NotNull Player owner, @Nullable Player viewer) {
-        String result = formatPhases(replacement);
-        if (!papiManager.isPapiEnabled() || !containsAnyPlaceholders(result)) {
-            return result;
-        }
-
-        result = papiManager.setPlaceholders(owner, result);
-        if (viewer != null && containsRelationalPlaceholders(result)) {
-            result = papiManager.setRelationalPlaceholders(viewer, owner, result);
-        }
-        return result;
+    private String resolveCustomReplacement(@NotNull String replacement, @NotNull Player owner) {
+        final String result = formatPhases(replacement);
+        return containsAnyPlaceholders(result) ? kokonutPlaceholders.setPlaceholders(owner, result) : result;
     }
 
     @Nullable
@@ -608,7 +531,7 @@ public class PlaceholderManager {
         final ExpiringMap<String, String> playerCache = getCachedPlaceholders(player);
         final String cached = playerCache.get(placeholder);
         if (cached != null) return cached;
-        final String fresh = papiManager.setPlaceholders(player, placeholder);
+        final String fresh = kokonutPlaceholders.resolve(player, placeholder);
         playerCache.put(placeholder, fresh, ExpirationPolicy.CREATED, effectiveTtlMs(placeholder), TimeUnit.MILLISECONDS);
         return fresh;
     }

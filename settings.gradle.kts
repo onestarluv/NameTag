@@ -5,3 +5,4 @@ plugins {
 rootProject.name = "kokonut_nametag"
 
 include("common", "api", "api-paper", "paper")
+includeBuild("..")

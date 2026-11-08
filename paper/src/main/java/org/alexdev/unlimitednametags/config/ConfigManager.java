@@ -1,19 +1,22 @@
 package org.alexdev.unlimitednametags.config;
 
-import de.exlll.configlib.YamlConfigurations;
 import lombok.Getter;
 import org.alexdev.unlimitednametags.UnlimitedNameTags;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
 
+/**
+ * Kokonut 고정 설정. settings.yml / advanced.yml을 읽거나 쓰지 않고, {@link Settings}와 {@link Advanced}의
+ * 코드 기본값을 그대로 사용한다. 값을 바꾸려면 해당 클래스의 기본값을 수정하고 다시 빌드한다.
+ * <p>
+ * 명령어로 바꾼 값(회전 방식, 문자 형식)은 서버가 켜져 있는 동안만 유지되며, 리로드하면 기본값으로 돌아간다.
+ */
 @Getter
 public class ConfigManager {
 
@@ -39,18 +42,8 @@ public class ConfigManager {
 
     @NotNull
     public Optional<Throwable> loadConfigs() {
-        final File settingsFile = new File(plugin.getDataFolder(), "settings.yml");
-
         try {
-            final Path settingsPath = settingsFile.toPath();
-            SettingsYamlMigrator.migrateIfNeeded(settingsPath, plugin.getLogger());
-            settings = YamlConfigurations.update(
-                    settingsPath,
-                    Settings.class,
-                    UntYamlConfiguration.PROPERTIES
-            );
-            checkData();
-            loadAdvancedConfig(false);
+            reload();
             return Optional.empty();
         } catch (final Exception e) {
             return Optional.of(e);
@@ -58,15 +51,13 @@ public class ConfigManager {
     }
 
     public void reload() {
-        final Path settingsPath = new File(plugin.getDataFolder(), "settings.yml").toPath();
-        try {
-            SettingsYamlMigrator.migrateIfNeeded(settingsPath, plugin.getLogger());
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to migrate settings.yml on reload", e);
-        }
-        settings = YamlConfigurations.load(settingsPath, Settings.class, UntYamlConfiguration.PROPERTIES);
-        checkData();
-        loadAdvancedConfig(true);
+        final Settings fresh = new Settings();
+        SettingsValidator.validateAndFix(fresh, msg -> plugin.getLogger().warning(msg));
+        settings = fresh;
+
+        final Advanced freshAdvanced = new Advanced();
+        sortHelmetHeightRules(freshAdvanced);
+        advanced = freshAdvanced;
     }
 
     @NotNull
@@ -74,28 +65,7 @@ public class ConfigManager {
         return advanced;
     }
 
-    private void loadAdvancedConfig(boolean keepPreviousOnFailure) {
-        final File file = new File(plugin.getDataFolder(), "advanced.yml");
-        if (!file.exists()) {
-            advanced = new Advanced();
-            sortHelmetHeightRules();
-            return;
-        }
-        try {
-            advanced = YamlConfigurations.load(file.toPath(), Advanced.class, UntYamlConfiguration.PROPERTIES);
-            AdvancedConfigValidator.validate(advanced, msg -> plugin.getLogger().warning(msg));
-            sortHelmetHeightRules();
-            plugin.getLogger().info("Loaded optional advanced.yml");
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Failed to load advanced.yml", e);
-            if (!keepPreviousOnFailure) {
-                advanced = new Advanced();
-                sortHelmetHeightRules();
-            }
-        }
-    }
-
-    private void sortHelmetHeightRules() {
+    private static void sortHelmetHeightRules(@NotNull Advanced advanced) {
         final List<Advanced.HelmetHeightRule> rules = advanced.getHelmetHeightRules();
         if (rules == null || rules.size() < 2) {
             return;
@@ -103,16 +73,7 @@ public class ConfigManager {
         rules.sort(Comparator.comparingInt(Advanced.HelmetHeightRule::getPriority).reversed());
     }
 
-    private void checkData() {
-        if (settings == null) {
-            throw new IllegalStateException("Settings not loaded");
-        }
-        if (SettingsValidator.validateAndFix(settings, msg -> plugin.getLogger().warning(msg))) {
-            save();
-        }
-    }
-
+    /** 설정 파일을 쓰지 않으므로 아무것도 하지 않는다. 기존 명령어 호환용. */
     public void save() {
-        YamlConfigurations.save(new File(plugin.getDataFolder(), "settings.yml").toPath(), Settings.class, settings, UntYamlConfiguration.PROPERTIES);
     }
 }

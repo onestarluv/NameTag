@@ -19,7 +19,6 @@ subprojects {
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.nexomc.com/snapshots/")
         maven("https://oss.sonatype.org/content/groups/public/")
-        maven("https://repo.extendedclip.com/releases")
         maven("https://repo.minebench.de/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
         maven("https://libraries.minecraft.net/")

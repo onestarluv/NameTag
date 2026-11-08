@@ -12,8 +12,8 @@ libraries:
 
 depend:
   - packetevents
+  - Kokonut-Core
 softdepend:
-  - PlaceholderAPI
   - ProtocolLib
   - ProtocolSupport
   - ViaVersion
