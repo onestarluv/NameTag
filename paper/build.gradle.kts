@@ -51,6 +51,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(libs.paperApi)
+    testImplementation("kr.gomsv:Kokonut-Core:cbt-1.0")
     testRuntimeOnly(libs.packeteventsSpigot)
 }
 

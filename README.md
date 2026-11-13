@@ -15,7 +15,7 @@ UnlimitedNameTags를 기반으로 수정했습니다. 원본 라이선스와 저
 
 1. `target/kokonut_nametag.jar`와 PacketEvents를 서버의 `plugins` 폴더에 넣습니다.
 2. 서버를 재시작합니다.
-3. `plugins/kokonut_nametag/settings.yml`에서 문구와 동작을 설정합니다.
+3. 이름표 문구와 동작의 기본값은 `Settings`와 `Advanced` 코드에 있습니다. 기본 이름표는 칭호 아래에 Core의 장착 색을 적용한 별명(미설정 시 마인크래프트 계정명)을 표시합니다.
 4. `/네임태그 리로드`로 설정을 적용합니다.
 
 기존 버전에서 이전한다면 서버를 종료하고 `plugins/UnlimitedNameTags` 폴더를 백업한 뒤 `plugins/kokonut_nametag`로 변경하세요. 기존 JAR는 제거해 중복 로드를 방지하세요. 최초 실행 시 라이브러리 다운로드를 위한 네트워크 연결이 필요합니다.
@@ -69,6 +69,20 @@ UnlimitedNameTags를 기반으로 수정했습니다. 원본 라이선스와 저
 여러 줄 텍스트, 조건부 표시, 아이템·블록 표시, 애니메이션, 발광, 벽 뒤 가시성, 개인별 표시 설정과 개발자 API를 제공합니다.
 
 Nexo 연동을 유지하고 Oraxen 연동과 전용 저장소를 제거했습니다. 미사용 Kotlin 플러그인·의존성 선언을 정리하고 매 틱 색상 단계 갱신 작업을 하나로 통합했습니다. 실제 성능 차이는 서버에서 별도로 측정해야 합니다.
+
+## Kokonut-Core 플레이스홀더
+
+PlaceholderAPI 없이 Kokonut-Core를 직접 읽어 채우는 플레이스홀더입니다(`KokonutPlaceholders`).
+
+| 플레이스홀더 | 내용 |
+| --- | --- |
+| `%kokonut_title%`, `%kokonut_title_plain%`, `%kokonut_title_legacy%`, `%kokonut_title_id%` | 장착한 칭호 |
+| `%kokonut_nickname%` | 별명(없으면 마인크래프트 이름) |
+| `%kokonut_colornick%` | 장착한 별명 색을 입힌 이름, MiniMessage 형식(`<aqua>이름`, `<#FF7200>이름`, `<gradient:…>이름`) |
+| `%kokonut_colornick_legacy%` | 같은 이름, `§` 색상 코드 형식(헥스는 `§x§r§r§g§g§b§b`, 그라데이션은 글자마다) |
+| `%kokonut_name%`, `%player_name%` | 마인크래프트 이름 |
+
+색 닉네임은 Core의 `ColorNickLookup`(메모리 조회)에서 읽습니다. 장착한 색이 없거나 Core가 색 닉네임을 지원하지 않으면 색 없이 이름만 나옵니다. `/별명색`이나 칭호 화면의 색 닉네임 탭에서 색을 바꾸면 다음 이름표 갱신 주기에 반영됩니다.
 
 ## 빌드
 

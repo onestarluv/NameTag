@@ -69,13 +69,13 @@ public class Settings {
 
     // ─── Defaults ─────────────────────────────────────────────────────────────
 
-    /** Kokonut 고정 이름표: 칭호 한 줄 + 서버 닉네임 한 줄. 설정 파일 없이 이 값이 그대로 쓰인다. */
+    /** Kokonut 고정 이름표: 칭호 한 줄과 장착한 색을 적용한 이름 한 줄. */
     private static Map<String, NameTag> defaultNameTags() {
         final Map<String, NameTag> m = new LinkedHashMap<>();
         m.put("default", new NameTag(null, List.of(
                 DisplayGroup.builder()
                         .line("%kokonut_title%")
-                        .line("%kokonut_nickname%")
+                        .line("%kokonut_colornick%")
                         .background(Background.ofRGB(false, 255, 0, 0, 255, true, false))
                         .scale(1f).yOffset(0.2f)
                         .build())));

@@ -2,6 +2,7 @@ package org.alexdev.unlimitednametags.placeholders;
 
 import kr.gomsv.kokonutCore.api.util.ServerNicknameUtil;
 import kr.gomsv.kokonutCore.api.title.TitleLookup;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.alexdev.unlimitednametags.UnlimitedNameTags;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,6 +22,10 @@ import java.util.regex.Pattern;
  *     Core {@link TitleLookup} 서비스의 메모리 캐시를 읽는다 (DB 접근 없음).</li>
  *     <li>{@code %kokonut_nickname%}: Core의 공유 닉네임 캐시({@link ServerNicknameUtil#cachedNickname})를 읽는다.
  *     같은 서버의 변경은 즉시, 다른 서버의 변경은 최대 30초 뒤 반영된다. 닉네임이 없으면 마인크래프트 이름을 쓴다.</li>
+ *     <li>{@code %kokonut_colornick%}, {@code %kokonut_colornick_legacy%}: 닉네임(없으면 마인크래프트 이름)에
+ *     Core {@code ColorNickLookup}의 장착 색(바닐라·헥스·그라데이션)을 입힌다. 앞은 MiniMessage({@code <#ff7200>}, {@code <gradient:..>}),
+ *     뒤는 {@code §} 색상 코드 형식(헥스는 {@code §x§r§r§g§g§b§b}, 그라데이션은 글자마다)이고,
+ *     장착한 색이 없거나 Core가 색 닉네임을 지원하지 않으면 색 없이 이름만 돌려준다.</li>
  *     <li>{@code %kokonut_name%}, {@code %player_name%}: 마인크래프트 이름.</li>
  * </ul>
  * 모르는 플레이스홀더는 그대로 남긴다 (PAPI와 같은 동작).
@@ -31,6 +36,8 @@ public final class KokonutPlaceholders {
 
     private final UnlimitedNameTags plugin;
     private volatile TitleLookup titles;
+    /** Core의 {@code ColorNickLookup}. 구버전 Core에서도 이 클래스가 로드되도록 Object로 둔다. */
+    private volatile Object colorNicks;
 
     public KokonutPlaceholders(@NotNull UnlimitedNameTags plugin) {
         this.plugin = plugin;
@@ -73,6 +80,8 @@ public final class KokonutPlaceholders {
         final String key = rawKey.toLowerCase(Locale.ROOT);
         return switch (key) {
             case "kokonut_nickname" -> nickname(player);
+            case "kokonut_colornick" -> colorNick(player, false);
+            case "kokonut_colornick_legacy" -> colorNick(player, true);
             case "kokonut_name", "player_name" -> player.getName();
             case "kokonut_title" -> title(player, "title");
             case "kokonut_title_plain" -> title(player, "title_plain");
@@ -93,6 +102,47 @@ public final class KokonutPlaceholders {
             titles = service;
         }
         return service.placeholder(player.getUniqueId(), kind);
+    }
+
+    /** 닉네임에 장착한 색을 입힌 문자열. 색이 없으면 색 없는 이름(MiniMessage면 태그를 이스케이프). */
+    @NotNull
+    private String colorNick(@NotNull Player player, boolean legacy) {
+        final String name = nickname(player);
+        try {
+            return ColorNicks.format(this, player.getUniqueId(), name, legacy);
+        } catch (LinkageError olderCore) {
+            return plain(name, legacy);
+        }
+    }
+
+    @NotNull
+    static String plain(@NotNull String name, boolean legacy) {
+        return legacy ? name : MiniMessage.miniMessage().escapeTags(name);
+    }
+
+    /** Core의 색 닉네임 API를 부르는 코드는 여기에만 둔다 (구버전 Core에서는 이 클래스만 실패한다). */
+    static final class ColorNicks {
+        @NotNull
+        static String format(@NotNull KokonutPlaceholders owner, @NotNull UUID uuid, @NotNull String name, boolean legacy) {
+            Object service = owner.colorNicks;
+            if (service == null) {
+                service = Bukkit.getServicesManager().load(kr.gomsv.kokonutCore.api.nickname.ColorNickLookup.class);
+                if (service == null) {
+                    return plain(name, legacy);
+                }
+                owner.colorNicks = service;
+            }
+            return format(((kr.gomsv.kokonutCore.api.nickname.ColorNickLookup) service).color(uuid), name, legacy);
+        }
+
+        /** {@code color}가 null이면 색 없는 이름. */
+        @NotNull
+        static String format(@Nullable kr.gomsv.kokonutCore.api.nickname.NickColor color, @NotNull String name, boolean legacy) {
+            if (color == null) {
+                return plain(name, legacy);
+            }
+            return legacy ? color.legacy(name) : color.miniMessage(name);
+        }
     }
 
     @NotNull
@@ -116,5 +166,6 @@ public final class KokonutPlaceholders {
 
     public void close() {
         titles = null;
+        colorNicks = null;
     }
 }
